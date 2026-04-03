@@ -81,7 +81,7 @@ WSGI_APPLICATION = "webbanhang.wsgi.application"
 #     }
 # }
 
-SUPABASE_DB_URL = "postgresql://postgres.nanoifhuxjyueqvadeeh:buitien1231@aws-1-ap-southeast-2.pooler.supabase.com:6543/postgres"
+SUPABASE_DB_URL = "postgresql://postgres.nanoifhuxjyueqvadeeh:[password]@aws-1-ap-southeast-2.pooler.supabase.com:6543/postgres"
 DATABASES = {
     "default": dj_database_url.parse(SUPABASE_DB_URL, conn_max_age=600),
 }
