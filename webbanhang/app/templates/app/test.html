@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MOHO Clone</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body { font-family: Arial, sans-serif; }
+    .navbar-brand { font-weight: bold; font-size: 28px; }
+    .hero {
+      background: url('https://images.unsplash.com/photo-1505691938895-1758d7feb511') center/cover no-repeat;
+      height: 500px;
+      position: relative;
+      color: white;
+    }
+    .hero-overlay {
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(0,0,0,0.4);
+    }
+    .hero-content {
+      position: relative;
+      z-index: 2;
+      max-width: 500px;
+    }
+    .product-card .img-wrap {
+      position: relative;
+      overflow: hidden;
+    }
+    .product-card img {
+      height: 220px;
+      object-fit: cover;
+      width: 100%;
+      transition: opacity 0.4s ease;
+      display: block;
+    }
+    .product-card img.second-img {
+      position: absolute;
+      top: 0;
+      left: 0;
+      opacity: 0;
+    }
+    .product-card:hover img.second-img {
+      opacity: 1;
+    }
+    .product-card:hover img.first-img {
+      opacity: 0;
+    }
+    .discount-badge {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      z-index: 10;
+    }
+  </style>
+</head>
+<body>
+
+<!-- Navbar -->
+<nav class="navbar navbar-expand-lg bg-white shadow-sm">
+  <div class="container">
+    <a class="navbar-brand text-primary" href="#">moho.</a>
+    <button class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#nav">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="nav">
+      <ul class="navbar-nav me-auto ms-3">
+        <li class="nav-item"><a class="nav-link" href="#">Sản phẩm</a></li>
+        <li class="nav-item"><a class="nav-link" href="#">Thiết kế - Thi công</a></li>
+        <li class="nav-item"><a class="nav-link" href="#">Khuyến mãi</a></li>
+        <li class="nav-item"><a class="nav-link" href="#">Tin tức</a></li>
+      </ul>
+      <form class="d-flex me-3">
+        <input class="form-control" type="search" placeholder="Tìm kiếm sản phẩm...">
+      </form>
+      <a href="#" class="me-3">Đăng nhập</a>
+      <a href="#">Giỏ hàng</a>
+    </div>
+  </div>
+</nav>
+
+<!-- Hero Carousel -->
+<section id="heroCarousel" class="carousel slide" data-bs-ride="carousel">
+  <div class="carousel-inner">
+
+    <div class="carousel-item active">
+      <div class="hero d-flex align-items-center" style="background:url('https://images.unsplash.com/photo-1505691938895-1758d7feb511') center/cover no-repeat;">
+        <div class="hero-overlay"></div>
+        <div class="container">
+          <div class="hero-content">
+            <h2>Nội Thất MOHO Chuẩn CARB-P2</h2>
+            <h1 class="fw-bold">Cho Không Gian Sống An Toàn</h1>
+            <p>Ưu đãi đến 49% - 01.04 - 30.04.2026</p>
+            <a href="#" class="btn btn-light">Xem chi tiết</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="carousel-item">
+      <div class="hero d-flex align-items-center" style="background:url('https://images.unsplash.com/photo-1505693416388-ac5ce068fe85') center/cover no-repeat;">
+        <div class="hero-overlay"></div>
+        <div class="container">
+          <div class="hero-content">
+            <h2>Bộ Sưu Tập Mới</h2>
+            <h1 class="fw-bold">Không Gian Hiện Đại</h1>
+            <p>Giảm giá đến 30%</p>
+            <a href="#" class="btn btn-light">Khám phá</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="carousel-item">
+      <div class="hero d-flex align-items-center" style="background:url('https://images.unsplash.com/photo-1493666438817-866a91353ca9') center/cover no-repeat;">
+        <div class="hero-overlay"></div>
+        <div class="container">
+          <div class="hero-content">
+            <h2>Trang Trí Nội Thất</h2>
+            <h1 class="fw-bold">Tinh Tế & Sang Trọng</h1>
+            <p>Ưu đãi đặc biệt tháng này</p>
+            <a href="#" class="btn btn-light">Xem ngay</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Controls -->
+  <button class="carousel-control-prev" type="button" data-bs-target="#heroCarousel" data-bs-slide="prev">
+    <span class="carousel-control-prev-icon"></span>
+  </button>
+  <button class="carousel-control-next" type="button" data-bs-target="#heroCarousel" data-bs-slide="next">
+    <span class="carousel-control-next-icon"></span>
+  </button>
+
+</section>
+
+<!-- Products Slider (Swiper) -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+<style>
+  .product-section { position: relative; }
+  .swiper { padding: 10px 40px; }
+  .swiper-slide { width: auto; }
+  .product-card { border-radius: 16px; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
+  .product-card img { height: 220px; object-fit: cover; }
+  .swiper-button-next, .swiper-button-prev {
+    width: 44px; height: 44px; border-radius: 50%;
+    background: #f26522; color: #fff;
+  }
+  .swiper-button-next::after, .swiper-button-prev::after { font-size: 16px; }
+</style>
+
+<section class="py-5 product-section">
+  <div class="container">
+    <div class="d-flex justify-content-between mb-4">
+      <h3>Giá siêu tốt</h3>
+      <a href="#">Xem thêm</a>
+    </div>
+
+    <div class="swiper productSwiper">
+      <div class="swiper-wrapper">
+
+        <div class="swiper-slide" style="width:260px">
+          <div class="card product-card position-relative">
+            <span class="badge bg-danger discount-badge">-25%</span>
+            <div class="img-wrap">
+            <img src="https://images.unsplash.com/photo-1582582494700-1eec2b1e8c0d" class="card-img-top first-img">
+            <img src="https://images.unsplash.com/photo-1505693416388-ac5ce068fe85" class="card-img-top second-img">
+          </div>
+            <div class="card-body">
+              <h6>Ghế ăn gỗ</h6>
+              <div>
+              <span class="text-danger fw-bold">1.490.000đ</span>
+              <div class="text-muted small text-decoration-line-through">2.000.000đ</div>
+              <div class="d-flex justify-content-between small mt-1">
+                <span class="text-warning">★★★★★ (93)</span>
+                <span class="text-muted">Đã bán 320</span>
+              </div>
+            </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="swiper-slide" style="width:260px">
+          <div class="card product-card position-relative">
+            <span class="badge bg-danger discount-badge">-25%</span>
+            <div class="img-wrap">
+            <img src="https://images.unsplash.com/photo-1505693416388-ac5ce068fe85" class="card-img-top first-img">
+            <img src="https://images.unsplash.com/photo-1555041469-a586c61ea9bc" class="card-img-top second-img">
+          </div>
+            <div class="card-body">
+              <h6>Ghế MILAN</h6>
+              <div>
+              <span class="text-danger fw-bold">1.490.000đ</span>
+              <div class="text-muted small text-decoration-line-through">2.000.000đ</div>
+              <div class="d-flex justify-content-between small mt-1">
+                <span class="text-warning">★★★★★ (93)</span>
+                <span class="text-muted">Đã bán 320</span>
+              </div>
+            </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="swiper-slide" style="width:260px">
+          <div class="card product-card position-relative">
+            <span class="badge bg-danger discount-badge">-31%</span>
+            <img src="https://images.unsplash.com/photo-1555041469-a586c61ea9bc" class="card-img-top">
+            <div class="card-body">
+              <h6>Bộ bàn ghế</h6>
+              <div>
+              <span class="text-danger fw-bold">13.490.000đ</span>
+              <div class="text-muted small text-decoration-line-through">2.000.000đ</div>
+              <div class="d-flex justify-content-between small mt-1">
+                <span class="text-warning">★★★★★ (93)</span>
+                <span class="text-muted">Đã bán 320</span>
+              </div>
+            </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="swiper-slide" style="width:260px">
+          <div class="card product-card position-relative">
+            <span class="badge bg-danger discount-badge">-22%</span>
+            <img src="https://images.unsplash.com/photo-1493666438817-866a91353ca9" class="card-img-top">
+            <div class="card-body">
+              <h6>Bàn ăn SERENA</h6>
+              <div>
+              <span class="text-danger fw-bold">5.990.000đ</span>
+              <div class="text-muted small text-decoration-line-through">2.000.000đ</div>
+              <div class="d-flex justify-content-between small mt-1">
+                <span class="text-warning">★★★★★ (93)</span>
+                <span class="text-muted">Đã bán 320</span>
+              </div>
+            </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="swiper-slide" style="width:260px">
+          <div class="card product-card">
+            <img src="https://images.unsplash.com/photo-1505691938895-1758d7feb511" class="card-img-top">
+            <div class="card-body">
+              <h6>Sofa gỗ</h6>
+              <div>
+              <span class="text-danger fw-bold">6.900.000đ</span>
+              <div class="text-muted small text-decoration-line-through">2.000.000đ</div>
+              <div class="d-flex justify-content-between small mt-1">
+                <span class="text-warning">★★★★★ (93)</span>
+                <span class="text-muted">Đã bán 320</span>
+              </div>
+            </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="swiper-slide" style="width:260px">
+          <div class="card product-card">
+            <img src="https://images.unsplash.com/photo-1507089947367-19c1da9775ae" class="card-img-top">
+            <div class="card-body">
+              <h6>Kệ TV</h6>
+              <div>
+              <span class="text-danger fw-bold">3.200.000đ</span>
+              <div class="text-muted small text-decoration-line-through">2.000.000đ</div>
+              <div class="d-flex justify-content-between small mt-1">
+                <span class="text-warning">★★★★★ (93)</span>
+                <span class="text-muted">Đã bán 320</span>
+              </div>
+            </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- arrows -->
+      <div class="swiper-button-prev"></div>
+      <div class="swiper-button-next"></div>
+    </div>
+  </div>
+</section>
+
+<!-- Best Seller Section -->
+<section class="py-5 bg-light">
+  <div class="container">
+    <div class="d-flex justify-content-between mb-4">
+      <h3>Bán chạy</h3>
+      <a href="#">Xem thêm</a>
+    </div>
+
+    <div class="row g-4">
+
+      <div class="col-md-3">
+        <div class="card product-card position-relative">
+          <span class="badge bg-danger discount-badge">-33%</span>
+          <div class="img-wrap">
+            <img src="https://images.unsplash.com/photo-1507089947367-19c1da9775ae" class="first-img">
+            <img src="https://images.unsplash.com/photo-1505691938895-1758d7feb511" class="second-img">
+          </div>
+          <div class="card-body">
+            <h6>Combo Phòng Khách</h6>
+            <div>
+              <span class="text-danger fw-bold">14.990.000đ</span>
+              <div class="text-muted small text-decoration-line-through">22.470.000đ</div>
+              <div class="d-flex justify-content-between small mt-1">
+                <span class="text-warning">★★★★★ (93)</span>
+                <span class="text-muted">Đã bán 320</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-3">
+        <div class="card product-card position-relative">
+          <span class="badge bg-danger discount-badge">-27%</span>
+          <div class="img-wrap">
+            <img src="https://images.unsplash.com/photo-1555041469-a586c61ea9bc" class="first-img">
+            <img src="https://images.unsplash.com/photo-1505693416388-ac5ce068fe85" class="second-img">
+          </div>
+          <div class="card-body">
+            <h6>Ghế Sofa Dalum</h6>
+            <div>
+              <span class="text-danger fw-bold">9.490.000đ</span>
+              <div class="text-muted small text-decoration-line-through">12.990.000đ</div>
+              <div class="d-flex justify-content-between small mt-1">
+                <span class="text-warning">★★★★★ (93)</span>
+                <span class="text-muted">Đã bán 320</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-3">
+        <div class="card product-card position-relative">
+          <span class="badge bg-danger discount-badge">-26%</span>
+          <div class="img-wrap">
+            <img src="https://images.unsplash.com/photo-1493666438817-866a91353ca9" class="first-img">
+            <img src="https://images.unsplash.com/photo-1582582494700-1eec2b1e8c0d" class="second-img">
+          </div>
+          <div class="card-body">
+            <h6>Sofa góc chữ L</h6>
+            <div>
+              <span class="text-danger fw-bold">13.990.000đ</span>
+              <div class="text-muted small text-decoration-line-through">18.980.000đ</div>
+              <div class="d-flex justify-content-between small mt-1">
+                <span class="text-warning">★★★★★ (93)</span>
+                <span class="text-muted">Đã bán 320</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-3">
+        <div class="card product-card position-relative">
+          <span class="badge bg-danger discount-badge">-32%</span>
+          <div class="img-wrap">
+            <img src="https://images.unsplash.com/photo-1505693416388-ac5ce068fe85" class="first-img">
+            <img src="https://images.unsplash.com/photo-1555041469-a586c61ea9bc" class="second-img">
+          </div>
+          <div class="card-body">
+            <h6>Combo phòng khách 5 món</h6>
+            <div>
+              <span class="text-danger fw-bold">25.490.000đ</span>
+              <div class="text-muted small text-decoration-line-through">37.650.000đ</div>
+              <div class="d-flex justify-content-between small mt-1">
+                <span class="text-warning">★★★★★ (93)</span>
+                <span class="text-muted">Đã bán 320</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+<script>
+  const swiper = new Swiper('.productSwiper', {
+    slidesPerView: 'auto',
+    spaceBetween: 16,
+    loop: true,
+    grabCursor: true,
+    autoplay: {
+      delay: 3000,
+      disableOnInteraction: false,
+    },
+    navigation: {
+      nextEl: '.swiper-button-next',
+      prevEl: '.swiper-button-prev',
+    },
+  });
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

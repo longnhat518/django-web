@@ -3,137 +3,139 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <!-- CSS -->
-    <link
-      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css"
-      rel="stylesheet"
-      integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB"
-      crossorigin="anonymous"
-    />
-    <link rel="stylesheet" href="{%static 'app/css/style.css' %}" />
-    <link rel="stylesheet" href="{%static 'app/css/owl.carousel.min.css' %}" />
-    <link rel="stylesheet" href="{%static 'app/css/all.min.css' %}" />
-    <link rel="stylesheet" href="{%static 'app/css/main.css' %}" />
-    <!--  js  -->
-    <script
-      src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"
-      integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g=="
-      crossorigin="anonymous"
-      referrerpolicy="no-referrer"
-    ></script>
-    <script
-      src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
-      integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r"
-      crossorigin="anonymous"
-    ></script>
-    <script
-      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.min.js"
-      integrity="sha384-G/EV+4j2dNv+tEPo3++6LCgdCROaejBqfUeNjuKAiuXbjrxilcCdDz6ZAVfHWe1Y"
-      crossorigin="anonymous"
-    ></script>
-    <script src="{%static 'app/js/owl.carousel.min.js'%}"></script>
-    <script src="{%static 'app/js/all.min.js'%}"></script>
-    <script src="{%static 'app/js/myscript.js'%}"></script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Document</title>
+    <title>MOHO Clone</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"
+    />
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+      }
+      .navbar-brand {
+        font-weight: bold;
+        font-size: 28px;
+      }
+      .hero {
+        background: url("https://images.unsplash.com/photo-1505691938895-1758d7feb511")
+          center/cover no-repeat;
+        height: 500px;
+        position: relative;
+        color: white;
+      }
+      .hero-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.4);
+      }
+      .hero-content {
+        position: relative;
+        z-index: 2;
+        max-width: 500px;
+      }
+      .product-card .img-wrap {
+        position: relative;
+        overflow: hidden;
+      }
+      .product-card img {
+        height: 220px;
+        object-fit: cover;
+        width: 100%;
+        transition: opacity 0.4s ease;
+        display: block;
+      }
+      .product-card img.second-img {
+        position: absolute;
+        top: 0;
+        left: 0;
+        opacity: 0;
+      }
+      .product-card:hover img.second-img {
+        opacity: 1;
+      }
+      .product-card:hover img.first-img {
+        opacity: 0;
+      }
+      .discount-badge {
+        position: absolute;
+        top: 10px;
+        left: 10px;
+        z-index: 10;
+      }
+      .product-section {
+        position: relative;
+      }
+      .swiper {
+        padding: 10px 40px;
+      }
+      .swiper-slide {
+        width: auto;
+      }
+      .product-card {
+        border-radius: 16px;
+        overflow: hidden;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+      }
+      .product-card img {
+        height: 220px;
+        object-fit: cover;
+      }
+      .swiper-button-next,
+      .swiper-button-prev {
+        width: 44px;
+        height: 44px;
+        border-radius: 50%;
+        background: #f26522;
+        color: #fff;
+      }
+      .swiper-button-next::after,
+      .swiper-button-prev::after {
+        font-size: 16px;
+      }
+    </style>
+    
   </head>
   <body>
     <!-- header -->
-    <nav class="navbar navbar-expand-lg bg-body-tertiary">
-      <div class="container-fluid">
-        <a class="navbar-brand" href="#">
-          <img
-            src="{%static 'app/images/Neel.png'%}"
-            alt=""
-            width="50"
-            height="50"
-          />
-        </a>
+    <nav class="navbar navbar-expand-lg bg-white shadow-sm">
+      <div class="container">
+        <a class="navbar-brand text-primary" href="{% url 'home' %}">moho.</a>
         <button
           class="navbar-toggler"
-          type="button"
           data-bs-toggle="collapse"
-          data-bs-target="#navbarSupportedContent"
-          aria-controls="navbarSupportedContent"
-          aria-expanded="false"
-          aria-label="Toggle navigation"
+          data-bs-target="#nav"
         >
           <span class="navbar-toggler-icon"></span>
         </button>
-        <div class="collapse navbar-collapse" id="navbarSupportedContent">
-          <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+        <div class="collapse navbar-collapse" id="nav">
+          <ul class="navbar-nav me-auto ms-3">
+            <li class="nav-item"><a class="nav-link" href="#">Sản phẩm</a></li>
             <li class="nav-item">
-              <a class="nav-link active" aria-current="page" href="#"
-                >Trang chủ</a
-              >
-            </li>
-            <li class="nav-item dropdown">
-              <a
-                class="nav-link dropdown-toggle"
-                href="#"
-                role="button"
-                data-bs-toggle="dropdown"
-                aria-expanded="false"
-              >
-                Sản phẩm
-              </a>
-              <ul class="dropdown-menu">
-                <li><a class="dropdown-item" href="#">Action</a></li>
-                <li><a class="dropdown-item" href="#">Another action</a></li>
-                <li><hr class="dropdown-divider" /></li>
-                <li>
-                  <a class="dropdown-item" href="#">Something else here</a>
-                </li>
-              </ul>
+              <a class="nav-link" href="#">Thiết kế - Thi công</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="#">Giới thiệu</a>
+              <a class="nav-link" href="#">Khuyến mãi</a>
             </li>
-            <li class="nav-item">
-              <a class="nav-link disabled" aria-disabled="true">Liên hệ</a>
-            </li>
+            <li class="nav-item"><a class="nav-link" href="#">Tin tức</a></li>
           </ul>
-          <form class="d-flex" role="search">
+          <form class="d-flex me-3">
             <input
-              class="form-control me-2"
+              class="form-control"
               type="search"
-              placeholder="Search"
-              aria-label="Search"
+              placeholder="Tìm kiếm sản phẩm..."
             />
-            <button class="btn btn-outline-success" type="submit">
-              Search
-            </button>
           </form>
+          <a href="#" class="me-3">Đăng nhập</a>
+          <a href="{% url 'cart' %}">Giỏ hàng</a>
         </div>
-        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-          <li class="nav-item dropdown">
-            <a
-              class="nav-link dropdown-toggle"
-              href="#"
-              role="button"
-              data-bs-toggle="dropdown"
-              aria-expanded="false"
-            >
-              User1
-            </a>
-            <ul class="dropdown-menu">
-              <li><a class="dropdown-item" href="#">Trang cá nhân</a></li>
-              <li><a class="dropdown-item" href="#">Đơn hàng</a></li>
-              <li>
-                <a class="dropdown-item" href="#">Thoát</a>
-              </li>
-            </ul>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="#">Giỏ hàng</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="#">Đăng nhập</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="#">Đăng ký</a>
-          </li>
-        </ul>
       </div>
     </nav>
     <!-- END header -->
@@ -148,5 +150,24 @@
     >
       Copy right 2026
     </footer>
+    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+    <script>
+      const swiper = new Swiper(".productSwiper", {
+        slidesPerView: "auto",
+        spaceBetween: 16,
+        loop: true,
+        grabCursor: true,
+        autoplay: {
+          delay: 8000,
+          disableOnInteraction: false,
+        },
+        navigation: {
+          nextEl: ".swiper-button-next",
+          prevEl: ".swiper-button-prev",
+        },
+      });
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
   </body>
 </html>
