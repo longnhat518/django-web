@@ -1,67 +1,97 @@
 {% extends 'app/base.html' %}
 {% load static %}
 {% block content_checkout %}
-     <div class="row">
-		<div class="col-lg-6">
-			<div class="box-element" id="form-wrapper">
-				<form id="form">
-					<div id="user-info">
-						<div class="form-field">
-							<input required class="form-control" type="text" name="name" placeholder="Name..">
-						</div>
-						<div class="form-field">
-							<input required class="form-control" type="email" name="email" placeholder="Email..">
-						</div>
-					</div>
-					
-					<div id="shipping-info">
-						<hr>
-						<p>Shipping Information:</p>
-						<hr>
-						<div class="form-field">
-							<input class="form-control" type="text" name="address" placeholder="Address..">
-						</div>
-						<div class="form-field">
-							<input class="form-control" type="text" name="city" placeholder="City..">
-						</div>
-						<div class="form-field">
-							<input class="form-control" type="text" name="state" placeholder="State..">
-						</div>
-						<div class="form-field">
-							<input class="form-control" type="tel" id="phone" name="phone" pattern="[0-9]{10}" placeholder="0123456789">
-						</div>
-						<div class="form-field">
-							<input class="form-control" type="text" name="country" placeholder="Country..">
-						</div>
-					</div>
+    <!-- Checkout Page -->
+<section class="py-5 bg-light">
+  <div class="container">
+    <div class="row g-4">
 
-					<hr>
-					<input id="form-button" class="btn btn-success btn-block" type="submit" value="Continue">
-				</form>
-			</div>
+      <!-- Left: Form -->
+      <div class="col-md-7">
+        <div class="bg-white p-4 mb-3 rounded shadow-sm">
+          <div class="d-flex justify-content-between align-items-center">
+            <span>Đăng nhập để mua hàng tiện lợi hơn</span>
+            <button class="btn btn-outline-dark btn-sm">Đăng nhập</button>
+          </div>
+        </div>
 
-			<br>
-			<div class="box-element hidden" id="payment-info">
-				<small>Paypal Options</small>
-			</div>
-			
-		</div>
+        <div class="bg-white p-4 rounded shadow-sm mb-3">
+          <h5 class="mb-3">Thông tin giao hàng</h5>
+          <input class="form-control mb-2" placeholder="Nhập họ và tên">
+          <input class="form-control mb-2" placeholder="Nhập số điện thoại">
+          <input class="form-control mb-2" placeholder="Nhập email">
+          <input class="form-control mb-2" value="Vietnam">
+          <input class="form-control mb-2" placeholder="Địa chỉ">
+          <input class="form-control" placeholder="Tỉnh/Thành phố">
+        </div>
 
-		<div class="col-lg-6">
-			<div class="box-element">
-				<a  class="btn btn-outline-dark" href="{% url 'cart' %}">&#x2190; Back to Cart</a>
-				<hr>
-				<h3>Order Summary</h3>
-				<hr>
-				<div class="cart-row">
-					<div style="flex:2"><img class="row-image" src="{% static 'app/images/placeholder.png' %}"></div>
-					<div style="flex:2"><p>Product 1</p></div>
-					<div style="flex:1"><p>$20.00</p></div>
-					<div style="flex:1"><p>x2</p></div>
-				</div>
-				<h5>Items:   2</h5>
-				<h5>Total:   $4</h5>
-			</div>
-		</div>
-	</div>
+        <div class="bg-white p-4 rounded shadow-sm">
+          <h5 class="mb-3">Phương thức thanh toán</h5>
+          <div class="form-check border p-2 mb-2">
+            <input class="form-check-input" type="radio" name="pay" checked>
+            <label class="form-check-label">Chuyển khoản ngân hàng</label>
+          </div>
+          <div class="form-check border p-2 mb-2">
+            <input class="form-check-input" type="radio" name="pay">
+            <label class="form-check-label">Thanh toán khi nhận hàng</label>
+          </div>
+          <div class="form-check border p-2 mb-2">
+            <input class="form-check-input" type="radio" name="pay">
+            <label class="form-check-label">Thanh toán VNPay</label>
+          </div>
+          <div class="form-check border p-2">
+            <input class="form-check-input" type="radio" name="pay">
+            <label class="form-check-label">Ví MoMo</label>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right: Summary -->
+      <div class="col-md-5">
+        <div class="bg-white p-3 rounded shadow-sm mb-3">
+          <h6>Giỏ hàng</h6>
+          <div class="d-flex align-items-center">
+            <img src="https://images.unsplash.com/photo-1493666438817-866a91353ca9" width="60" class="me-2">
+            <div class="flex-grow-1">
+              <small>Bàn ăn MOHO</small>
+              <div class="text-danger fw-bold">8,990,000đ</div>
+            </div>
+            <div class="d-flex align-items-center">
+              <button class="btn btn-sm btn-outline-secondary btn-minus">-</button>
+              <input type="text" value="1" class="form-control form-control-sm mx-1 quantity" style="width:50px">
+              <button class="btn btn-sm btn-outline-secondary btn-plus">+</button>
+            </div>
+          </div>
+          <small class="text-success">Bạn đã được giảm 3,960,000đ</small>
+        </div>
+
+        <div class="bg-white p-3 rounded shadow-sm mb-3">
+          <h6>Mã khuyến mãi</h6>
+          <div class="d-flex">
+            <input id="coupon" class="form-control me-2" placeholder="Nhập mã">
+            <button class="btn btn-dark" onclick="applyCoupon()">Áp dụng</button>
+          </div>
+        </div>
+
+        <div class="bg-white p-3 rounded shadow-sm">
+          <h6>Tóm tắt đơn hàng</h6>
+          <div class="d-flex justify-content-between">
+            <span>Tổng tiền:</span>
+            <span id="subtotal">8,990,000đ</span>
+          </div>
+          <div class="d-flex justify-content-between">
+            <span>Giảm giá:</span>
+            <span id="discount">0đ</span>
+          </div>
+          <div class="d-flex justify-content-between fw-bold mt-2">
+            <span>Tổng thanh toán:</span>
+            <span id="final">8,990,000đ</span>
+          </div>
+          <button class="btn btn-dark w-100 mt-3">Đặt hàng</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
 {% endblock content_checkout %}

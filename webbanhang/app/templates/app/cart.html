@@ -1,69 +1,61 @@
 {% extends 'app/base.html' %} {% load static %} {% block cart_content %}
-<div class="row">
-  <div class="col-lg-12">
-    <div class="box-element">
-      <a class="btn btn-outline-dark" href="{% url 'home' %}"
-        >&#x2190; Continue Shopping</a
-      >
+<!-- Cart Page -->
+<section class="py-5 bg-light">
+  <div class="container">
+    <h2 class="text-center mb-4">Giỏ hàng của bạn</h2>
 
-      <br />
-      <br />
-      <table class="table">
-        <tr>
-          <th>
-            <h5>Items: <strong>3</strong></h5>
-          </th>
-          <th>
-            <h5>Total:<strong> $42</strong></h5>
-          </th>
-          <th>
-            <a
-              style="float: right; margin: 5px"
-              class="btn btn-success"
-              href="{% url 'checkout' %}"
-              >Checkout</a
-            >
-          </th>
-        </tr>
-      </table>
-    </div>
+    <div class="row">
+      <!-- Left: Cart Items -->
+      <div class="col-md-8">
+        <div class="bg-white p-3 mb-3">
+          <p><strong>Có 1 sản phẩm</strong> trong giỏ hàng</p>
 
-    <br />
-    <div class="box-element">
-      <div class="cart-row">
-        <div style="flex: 2"></div>
-        <div style="flex: 2"><strong>Item</strong></div>
-        <div style="flex: 1"><strong>Price</strong></div>
-        <div style="flex: 1"><strong>Quantity</strong></div>
-        <div style="flex: 1"><strong>Total</strong></div>
-      </div>
+          <div class="d-flex align-items-center border-bottom pb-3 cart-item" data-price="8990000">
+            <img src="https://images.unsplash.com/photo-1493666438817-866a91353ca9" width="80" class="me-3">
+            <div class="flex-grow-1">
+              <h6>Bộ Bàn Ăn Gỗ Cao Su Tự Nhiên MOHO VLINE 601</h6>
+              <div>
+                <span class="text-danger fw-bold">8,990,000đ</span>
+                <span class="text-muted text-decoration-line-through ms-2">12,950,000đ</span>
+              </div>
+              <small class="text-muted">Nâu / 4 Ghế Đơn</small>
 
-      <div class="cart-row">
-        <div style="flex: 2">
-          <img
-            class="row-image"
-            src="{% static 'app/images/placeholder.png' %}"
-          />
-        </div>
-        <div style="flex: 2"><p>Product 1</p></div>
-        <div style="flex: 1"><p>$20</p></div>
-        <div style="flex: 1">
-          <p class="quantity">2</p>
-          <div class="quantity">
-            <img
-              class="chg-quantity"
-              src="{% static  'app/images/arrow-up.png' %}"
-            />
-
-            <img
-              class="chg-quantity"
-              src="{% static  'app/images/arrow-down.png' %}"
-            />
+              <div class="mt-2 d-flex align-items-center">
+                <button class="btn btn-sm btn-outline-secondary btn-minus">-</button>
+                <input type="text" value="1" class="form-control form-control-sm text-center mx-2 quantity" style="width:60px">
+                <button class="btn btn-sm btn-outline-secondary btn-plus">+</button>
+              </div>
+            </div>
+            <div class="text-end">
+              <div class="fw-bold">8,990,000đ</div>
+              <button class="btn btn-sm text-danger">×</button>
+            </div>
           </div>
         </div>
-        <div style="flex: 1"><p>$32</p></div>
+
+        <div class="bg-white p-3">
+          <label class="form-label">Ghi chú đơn hàng</label>
+          <textarea class="form-control" rows="4"></textarea>
+        </div>
       </div>
-    </div>
-  </div>
-</div>
+
+      <!-- Right: Summary -->
+      <div class="col-md-4">
+        <div class="bg-white p-3">
+          <h5>Thông tin đơn hàng</h5>
+          <div class="d-flex justify-content-between mt-3">
+            <span>Tổng tiền:</span>
+            <strong class="text-danger" id="totalPrice">8,990,000đ</strong>
+          </div>
+          <a href="{% url 'checkout' %}" class="btn btn-danger w-100 mt-3">THANH TOÁN</a>
+        </div>
+
+        <div class="mt-3 small text-muted">
+          <p>✔ Không rủi ro. Đặt hàng trước, thanh toán sau</p>
+          <p>✔ Giao hàng trong vòng 3 ngày</p>
+          <p>✔ Bảo hành 2 năm</p>
+          <p>✔ Chất lượng tiêu chuẩn quốc tế</p>
+        </div>
+      </div>
+</section>
 {% endblock cart_content %}
