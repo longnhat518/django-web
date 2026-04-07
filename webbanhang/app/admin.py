@@ -14,13 +14,24 @@ class ProductImageInline(admin.TabularInline):
 class ProductAdmin(admin.ModelAdmin):
     inlines = [ProductImageInline]
 
+class OrderAdmin(admin.ModelAdmin):
+    list_display = ('customer', 'date_ordered', 'complete', 'transaction_id')
+    list_filter = ('complete', 'date_ordered')
+    search_fields = ('customer__name', 'transaction_id')
+    list_editable = ('complete',)
+
+class OrderItemAdmin(admin.ModelAdmin):
+    list_display = ('product', 'order', 'quantity', 'date_added')
+    list_filter = ('date_added',)
+    search_fields = ('product__name', 'order__customer__name')
+    list_editable = ('quantity',)
+
 # Register your models here.
 admin.site.register(Customer)
 admin.site.register(Product, ProductAdmin)
-admin.site.register(Order)
-admin.site.register(OrderItem)
+admin.site.register(Order, OrderAdmin)
+admin.site.register(OrderItem, OrderItemAdmin)
 admin.site.register(ShippingAddress)
-admin.site.register(ProductImage)
 admin.site.register(Category, CategoryAdmin)
 
 

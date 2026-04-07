@@ -83,6 +83,34 @@
   </button>
 </section>
 {%endblock banner-slide%} 
+{%block cart_list %}
+<div id="cartDropdown" class="cart-dropdown">
+  <div class="p-2 fw-bold">GIỎ HÀNG</div>
+
+  <div class="cart-item-mini">
+    <img src="https://images.unsplash.com/photo-1505691938895-1758d7feb511">
+    <div class="flex-grow-1">
+      <small>Sofa phòng khách</small>
+      <div>
+        <span class="fw-bold">10,490,000đ</span>
+        <small class="text-muted text-decoration-line-through">12,990,000đ</small>
+      </div>
+    </div>
+    <button class="btn btn-sm text-danger">×</button>
+  </div>
+
+  <div class="cart-footer">
+    <div class="d-flex justify-content-between mb-2">
+      <span>Tổng tiền:</span>
+      <strong class="text-danger">10,490,000đ</strong>
+    </div>
+    <div class="d-flex gap-2">
+      <button class="btn btn-secondary w-50">Xem giỏ hàng</button>
+      <button class="btn btn-primary w-50">Thanh toán</button>
+    </div>
+  </div>
+</div>
+{%endblock cart_list %}
 {% block main-content %} {% comment %}
 <div class="row">
   <div class="col-lg-4">

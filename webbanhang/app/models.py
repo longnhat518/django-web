@@ -42,6 +42,7 @@ class Product(models.Model):
     is_on_sale = models.BooleanField(default=False, verbose_name="Sản phẩm đang Sale")
     digital = models.BooleanField(default=False, null=True, blank=False, verbose_name="Sản phẩm Kỹ thuật số (Không ship)")
     sold_count = models.IntegerField(default=0, null=True, blank=True, verbose_name="Đã bán được")
+    quantity = models.IntegerField(default=0, null=True, blank=True, verbose_name="Số lượng")
 
     class Meta:
         verbose_name = "Sản phẩm"

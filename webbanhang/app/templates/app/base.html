@@ -13,94 +13,7 @@
       rel="stylesheet"
       href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"
     />
-    <style>
-      body {
-        font-family: Arial, sans-serif;
-      }
-      .navbar-brand {
-        font-weight: bold;
-        font-size: 28px;
-      }
-      .hero {
-        background: url("https://images.unsplash.com/photo-1505691938895-1758d7feb511")
-          center/cover no-repeat;
-        height: 500px;
-        position: relative;
-        color: white;
-      }
-      .hero-overlay {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: rgba(0, 0, 0, 0.4);
-      }
-      .hero-content {
-        position: relative;
-        z-index: 2;
-        max-width: 500px;
-      }
-      .product-card .img-wrap {
-        position: relative;
-        overflow: hidden;
-      }
-      .product-card img {
-        height: 220px;
-        object-fit: cover;
-        width: 100%;
-        transition: opacity 0.4s ease;
-        display: block;
-      }
-      .product-card img.second-img {
-        position: absolute;
-        top: 0;
-        left: 0;
-        opacity: 0;
-      }
-      .product-card:hover img.second-img {
-        opacity: 1;
-      }
-      .product-card:hover img.first-img {
-        opacity: 0;
-      }
-      .discount-badge {
-        position: absolute;
-        top: 10px;
-        left: 10px;
-        z-index: 10;
-      }
-      .product-section {
-        position: relative;
-      }
-      .swiper {
-        padding: 10px 40px;
-      }
-      .swiper-slide {
-        width: auto;
-      }
-      .product-card {
-        border-radius: 16px;
-        overflow: hidden;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-      }
-      .product-card img {
-        height: 220px;
-        object-fit: cover;
-      }
-      .swiper-button-next,
-      .swiper-button-prev {
-        width: 44px;
-        height: 44px;
-        border-radius: 50%;
-        background: #f26522;
-        color: #fff;
-      }
-      .swiper-button-next::after,
-      .swiper-button-prev::after {
-        font-size: 16px;
-      }
-    </style>
+    <link rel="stylesheet" href="{%static 'app/css/style.css'%}">
     
   </head>
   <body>
@@ -134,7 +47,7 @@
             />
           </form>
           <a href="#" class="me-3">Đăng nhập</a>
-          <a href="{% url 'cart' %}">Giỏ hàng</a>
+          <a href="#" id="cartBtn">Giỏ hàng</a>
         </div>
       </div>
     </nav>
@@ -144,6 +57,7 @@
     {% block main-content %} {% endblock main-content %}
     {% block cart_content %} {% endblock cart_content %}
     {% block content_checkout %} {% endblock content_checkout %}
+    {% block cart_list %} {% endblock cart_list %}
     <!-- End Main -->
     <footer
       class="container--fluid bg-success text-center fixed-bottom p-2 mt-5"
