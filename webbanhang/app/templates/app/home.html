@@ -82,36 +82,7 @@
     <span class="carousel-control-next-icon"></span>
   </button>
 </section>
-{%endblock banner-slide%} 
-{%block cart_list %}
-<div id="cartDropdown" class="cart-dropdown">
-  <div class="p-2 fw-bold">GIỎ HÀNG</div>
-
-  <div class="cart-item-mini">
-    <img src="https://images.unsplash.com/photo-1505691938895-1758d7feb511">
-    <div class="flex-grow-1">
-      <small>Sofa phòng khách</small>
-      <div>
-        <span class="fw-bold">10,490,000đ</span>
-        <small class="text-muted text-decoration-line-through">12,990,000đ</small>
-      </div>
-    </div>
-    <button class="btn btn-sm text-danger">×</button>
-  </div>
-
-  <div class="cart-footer">
-    <div class="d-flex justify-content-between mb-2">
-      <span>Tổng tiền:</span>
-      <strong class="text-danger">10,490,000đ</strong>
-    </div>
-    <div class="d-flex gap-2">
-      <button class="btn btn-secondary w-50">Xem giỏ hàng</button>
-      <button class="btn btn-primary w-50">Thanh toán</button>
-    </div>
-  </div>
-</div>
-{%endblock cart_list %}
-{% block main-content %} {% comment %}
+{%endblock banner-slide%} {% block main-content %} {% comment %}
 <div class="row">
   <div class="col-lg-4">
     <img src="{%static 'app/images/cow-ghee.png'%}" class="thumbnail" alt="" />
@@ -171,11 +142,13 @@
 
     <div class="swiper productSwiper">
       <div class="swiper-wrapper">
-        {% comment %} Đây là 1 sản phẩm {% endcomment %}
-         {%  for featured_product in featured_products %}
+        {% comment %} Đây là 1 sản phẩm {% endcomment %} 
+        {% for featured_product in featured_products %}
         <div class="swiper-slide" style="width: 260px">
           <div class="card product-card position-relative">
-            <span class="badge bg-danger discount-badge">-{{featured_product.discount_percentage}}%</span>
+            <span class="badge bg-danger discount-badge"
+              >-{{featured_product.discount_percentage}}%</span
+            >
             <div class="img-wrap">
               <a href=""
                 ><img
@@ -187,17 +160,23 @@
               /></a>
             </div>
             <div class="card-body d-flex flex-column">
-              <h6>{{featured_product.short_name}}</h6>
+              <h6 title="{{featured_product.name}}">
+                {{featured_product.short_name}}
+              </h6>
               <div class="mb-3">
-                <span class="text-danger fw-bold fs-5">{{featured_product.format_price}}</span>
+                <span class="text-danger fw-bold fs-5"
+                  >{{featured_product.format_price}}</span
+                >
                 <div class="text-muted small text-decoration-line-through">
                   {{featured_product.format_old_price}}
                 </div>
               </div>
               <div class="mt-auto d-flex gap-2">
                 <button
-                  class="btn btn-outline-dark btn-sm flex-fill fw-bold add-btn"
+                  class="btn btn-outline-dark btn-sm flex-fill fw-bold add-btn update-cart"
                   style="border-radius: 8px; font-size: 12px"
+                  data-product={{ featured_product.id }}
+                  data-action ="add"
                 >
                   <i class="fas fa-cart-plus"></i> Thêm vào giỏ
                 </button>
@@ -217,7 +196,7 @@
             </div>
           </div>
         </div>
-        {% endfor %}
+        {% endfor %} 
         {% comment %} Đây là hết 1 sản phẩm {% endcomment %}
       </div>
 
@@ -241,19 +220,15 @@
         <div class="card product-card position-relative">
           <span class="badge bg-danger discount-badge">-33%</span>
           <div class="img-wrap">
-            <img
-              src="{{ sale_product.imageURL }}"
-              class="first-img"
-            />
-            <img
-              src="{{ sale_product.hover_imageURL }}"
-              class="second-img"
-            />
+            <img src="{{ sale_product.imageURL }}" class="first-img" />
+            <img src="{{ sale_product.hover_imageURL }}" class="second-img" />
           </div>
           <div class="card-body d-flex flex-column">
             <h6>{{ sale_product.short_name}}</h6>
             <div>
-              <span class="text-danger fw-bold">{{ sale_product.format_price}}</span>
+              <span class="text-danger fw-bold"
+                >{{ sale_product.format_price}}</span
+              >
               <div class="text-muted small text-decoration-line-through">
                 {{ sale_product.format_old_price}}
               </div>
@@ -262,25 +237,25 @@
               </div>
             </div>
             <div class="mt-auto d-flex gap-2">
-                <button
-                  class="btn btn-outline-dark btn-sm flex-fill fw-bold add-btn"
-                  style="border-radius: 8px; font-size: 12px"
-                >
-                  <i class="fas fa-cart-plus"></i> Thêm giỏ
-                </button>
-                <a
-                  href="#"
-                  class="btn btn-sm flex-fill fw-bold text-white shadow-sm"
-                  style="
-                    border-radius: 8px;
-                    background-color: #f26522;
-                    border: none;
-                    font-size: 13px;
-                    line-height: 24px;
-                  "
-                  >Mua ngay</a
-                >
-              </div>
+              <button
+                class="btn btn-outline-dark btn-sm flex-fill fw-bold add-btn"
+                style="border-radius: 8px; font-size: 12px"
+              >
+                <i class="fas fa-cart-plus"></i> Thêm giỏ
+              </button>
+              <a
+                href="#"
+                class="btn btn-sm flex-fill fw-bold text-white shadow-sm"
+                style="
+                  border-radius: 8px;
+                  background-color: #f26522;
+                  border: none;
+                  font-size: 13px;
+                  line-height: 24px;
+                "
+                >Mua ngay</a
+              >
+            </div>
           </div>
         </div>
       </div>

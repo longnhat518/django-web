@@ -125,23 +125,23 @@ function updateTotal() {
   totalEl.innerText = formatVND(total);
 }
 
-document.querySelectorAll('.btn-plus').forEach(btn => {
-  btn.addEventListener('click', () => {
-    const input = btn.parentElement.querySelector('.quantity');
-    input.value = parseInt(input.value) + 1;
-    updateTotal();
-  });
-});
+// document.querySelectorAll('.btn-plus').forEach(btn => {
+//   btn.addEventListener('click', () => {
+//     const input = btn.parentElement.querySelector('.quantity');
+//     input.value = parseInt(input.value) + 1;
+//     updateTotal();
+//   });
+// });
 
-document.querySelectorAll('.btn-minus').forEach(btn => {
-  btn.addEventListener('click', () => {
-    const input = btn.parentElement.querySelector('.quantity');
-    let value = parseInt(input.value) - 1;
-    if (value < 1) value = 1;
-    input.value = value;
-    updateTotal();
-  });
-});
+// document.querySelectorAll('.btn-minus').forEach(btn => {
+//   btn.addEventListener('click', () => {
+//     const input = btn.parentElement.querySelector('.quantity');
+//     let value = parseInt(input.value) - 1;
+//     if (value < 1) value = 1;
+//     input.value = value;
+//     updateTotal();
+//   });
+// });
 
 document.querySelectorAll('.quantity').forEach(input => {
   input.addEventListener('input', updateTotal);
@@ -151,21 +151,11 @@ updateTotal();
 
 
 // checkout
-let price = 8990000;
+
 let quantity = 1;
 let discount = 0;
 
-function formatVND(n){return n.toLocaleString('vi-VN')+'đ'}
 
-function render(){
-  const subtotal = price * quantity;
-  const subtotal_text = document.getElementById('subtotal')
-  if (subtotal_text) subtotal_text.innerText = formatVND(subtotal);
-  const discount_text = document.getElementById('discount')
-  if (discount_text) discount_text.innerText = formatVND(discount);
-  const final_text = document.getElementById('final')
-  if (final_text) final_text.innerText = formatVND(subtotal - discount);
-}
 
 document.querySelectorAll('.btn-plus').forEach(btn=>{
   btn.addEventListener('click', ()=>{
@@ -173,6 +163,7 @@ document.querySelectorAll('.btn-plus').forEach(btn=>{
     quantity = parseInt(input.value) + 1;
     input.value = quantity;
     render();
+    updateTotal();
   });
 });
 
@@ -182,6 +173,7 @@ document.querySelectorAll('.btn-minus').forEach(btn=>{
     quantity = Math.max(1, parseInt(input.value) - 1);
     input.value = quantity;
     render();
+    updateTotal();
   });
 });
 
@@ -192,10 +184,29 @@ document.querySelectorAll('.quantity').forEach(input=>{
   });
 });
 
+function formatVND(n){return n.toLocaleString('vi-VN')+'đ'}
+
+function render(){
+  const subtotal_text = document.getElementById('subtotal')
+  if (!subtotal_text) return;
+  
+  const subtotal = parseInt(subtotal_text.getAttribute('data-value')) || 0;
+  subtotal_text.innerText = formatVND(subtotal);
+  
+  const discount_text = document.getElementById('discount')
+  if (discount_text) discount_text.innerText = formatVND(discount);
+  
+  const final_text = document.getElementById('final')
+  if (final_text) final_text.innerText = formatVND(subtotal - discount);
+}
+
 function applyCoupon(){
   const code = document.getElementById('coupon').value.trim();
-  if(code==='SALE10') discount = price * quantity * 0.1;
-  else if(code==='SALE20') discount = price * quantity * 0.2;
+  const subtotal_text = document.getElementById('subtotal');
+  const subtotal = subtotal_text ? (parseInt(subtotal_text.getAttribute('data-value')) || 0) : 0;
+  
+  if(code==='SALE10') discount = subtotal * 0.1;
+  else if(code==='SALE20') discount = subtotal * 0.2;
   else discount = 0;
   render();
 }
@@ -204,7 +215,7 @@ render();
 
 const cartBtn = document.getElementById("cartBtn");
 const cartDropdown = document.getElementById('cartDropdown');
-
+ 
 if (cartBtn && cartDropdown) {
   cartBtn.addEventListener('click', (e) => {
     console.log('cartBtn clicked');

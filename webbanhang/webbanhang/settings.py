@@ -75,17 +75,17 @@ WSGI_APPLICATION = "webbanhang.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/6.0/ref/settings/#databases
 
-DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
-    }
-}
-
-# SUPABASE_DB_URL = "postgresql://postgres.nanoifhuxjyueqvadeeh:[password]@aws-1-ap-southeast-2.pooler.supabase.com:6543/postgres"
 # DATABASES = {
-#     "default": dj_database_url.parse(SUPABASE_DB_URL, conn_max_age=600),
+#     "default": {
+#         "ENGINE": "django.db.backends.sqlite3",
+#         "NAME": BASE_DIR / "db.sqlite3",
+#     }
 # }
+
+SUPABASE_DB_URL = "postgresql://postgres.nanoifhuxjyueqvadeeh:[password]@aws-1-ap-southeast-2.pooler.supabase.com:6543/postgres"
+DATABASES = {
+    "default": dj_database_url.parse(SUPABASE_DB_URL, conn_max_age=600),
+}
 
 
 # Password validation

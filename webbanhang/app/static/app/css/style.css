@@ -1,5 +1,5 @@
 body {
-  font-family: Arial, sans-serif;
+  font-family: 'Montserrat', sans-serif;
 }
 .navbar-brand {
   font-weight: bold;
@@ -88,7 +88,7 @@ body {
   position: absolute;
   right: 15%;
   top: 60px;
-  width: 320px;
+  width: 400px;
   background: #fff;
   border-radius: 8px;
   box-shadow: 0 10px 30px rgba(0,0,0,0.15);
@@ -104,3 +104,8 @@ body {
 }
 .cart-item-mini img { width: 60px; height: 60px; object-fit: cover; }
 .cart-footer { padding: 10px; }
+
+.cart-items{
+  max-height: 400px;
+  overflow-y: scroll;
+}

@@ -53,7 +53,7 @@ class Product(models.Model):
 
     @property
     def short_name(self):
-        return self.name[:50] + "..."
+        return self.name[:40] + "..."
     @property
     def discount_percentage(self):
         try:
@@ -143,6 +143,13 @@ class Order(models.Model):
         return total
 
     @property
+    def format_get_cart_total(self):
+        try:
+            return "{:,.0f}".format(self.get_cart_total).replace(',', '.') + '₫'
+        except:
+            return '0₫'
+
+    @property
     def shipping(self):
         shipping = False
         orderitems = self.orderitem_set.all()
@@ -150,7 +157,7 @@ class Order(models.Model):
             if i.product and i.product.digital == False:
                 shipping = True
         return shipping
-
+    
 class OrderItem(models.Model):
     product = models.ForeignKey(Product, on_delete=models.SET_NULL, null=True, blank=True)
     order = models.ForeignKey(Order, on_delete=models.SET_NULL, null=True, blank=True)
@@ -164,6 +171,21 @@ class OrderItem(models.Model):
     def get_total(self):
         total = self.product.price * self.quantity
         return total
+
+    @property
+    def format_get_total(self):
+        try:
+            return "{:,.0f}".format(self.get_total).replace(',', '.') + '₫'
+        except:
+            return '0₫'
+
+    @property
+    def sale_after_discount(self):
+        try:
+            sale_after_discount = (self.product.old_price * self.quantity) - (self.product.price * self.quantity)
+            return "{:,.0f}".format(sale_after_discount).replace(",", ".") + "₫"
+        except:
+            return '0₫'
 
 class ShippingAddress(models.Model):
     customer = models.ForeignKey(Customer, on_delete=models.SET_NULL, null=True, blank=True)

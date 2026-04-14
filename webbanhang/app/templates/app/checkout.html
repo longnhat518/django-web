@@ -8,13 +8,14 @@
 
       <!-- Left: Form -->
       <div class="col-md-7">
+        {% if not request.user.is_authenticated %}
         <div class="bg-white p-4 mb-3 rounded shadow-sm">
           <div class="d-flex justify-content-between align-items-center">
             <span>Đăng nhập để mua hàng tiện lợi hơn</span>
             <button class="btn btn-outline-dark btn-sm">Đăng nhập</button>
           </div>
         </div>
-
+        {%endif%}
         <div class="bg-white p-4 rounded shadow-sm mb-3">
           <h5 class="mb-3">Thông tin giao hàng</h5>
           <input class="form-control mb-2" placeholder="Nhập họ và tên">
@@ -48,23 +49,30 @@
 
       <!-- Right: Summary -->
       <div class="col-md-5">
+      
         <div class="bg-white p-3 rounded shadow-sm mb-3">
           <h6>Giỏ hàng</h6>
-          <div class="d-flex align-items-center">
-            <img src="https://images.unsplash.com/photo-1493666438817-866a91353ca9" width="60" class="me-2">
-            <div class="flex-grow-1">
-              <small>Bàn ăn MOHO</small>
-              <div class="text-danger fw-bold">8,990,000đ</div>
-            </div>
+            {%for item in items%}
+          <div>
             <div class="d-flex align-items-center">
-              <button class="btn btn-sm btn-outline-secondary btn-minus">-</button>
-              <input type="text" value="1" class="form-control form-control-sm mx-1 quantity" style="width:50px">
-              <button class="btn btn-sm btn-outline-secondary btn-plus">+</button>
-            </div>
+              <img src="{{item.product.imageURL}}" width="60" class="me-2">
+                <div class="flex-grow-1">
+                  <small>{{item.product.name}}</small>
+                  <div class="text-muted small text-decoration-line-through">
+                      {{item.product.format_old_price}}
+                    </div>
+                  <div class="text-danger fw-bold">{{item.product.format_price}}</div>
+                </div>
+                <div class="d-flex align-items-center">
+                  <button class="btn btn-sm btn-outline-secondary btn-minus">-</button>
+                  <input type="text" value="{{item.quantity}}" class="form-control form-control-sm mx-1 quantity" style="width:50px">
+                  <button class="btn btn-sm btn-outline-secondary btn-plus">+</button>
+                </div>
+              </div>
+            <small class="text-success">Bạn đã được giảm {{item.sale_after_discount}}</small>
           </div>
-          <small class="text-success">Bạn đã được giảm 3,960,000đ</small>
+          {%endfor%}
         </div>
-
         <div class="bg-white p-3 rounded shadow-sm mb-3">
           <h6>Mã khuyến mãi</h6>
           <div class="d-flex">
@@ -77,7 +85,7 @@
           <h6>Tóm tắt đơn hàng</h6>
           <div class="d-flex justify-content-between">
             <span>Tổng tiền:</span>
-            <span id="subtotal">8,990,000đ</span>
+            <span id="subtotal" data-value="{{order.get_cart_total}}">{{order.get_cart_total}}</span>
           </div>
           <div class="d-flex justify-content-between">
             <span>Giảm giá:</span>
@@ -85,7 +93,7 @@
           </div>
           <div class="d-flex justify-content-between fw-bold mt-2">
             <span>Tổng thanh toán:</span>
-            <span id="final">8,990,000đ</span>
+            <span id="final"></span>
           </div>
           <button class="btn btn-dark w-100 mt-3">Đặt hàng</button>
         </div>
