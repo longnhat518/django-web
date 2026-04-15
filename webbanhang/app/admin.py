@@ -1,4 +1,5 @@
 from django.contrib import admin
+from django.utils.html import mark_safe
 from .models import *
 
 
@@ -30,6 +31,22 @@ class OrderItemAdmin(admin.ModelAdmin):
     search_fields = ('product__name', 'order__customer__name')
     list_editable = ('quantity',)
 
+class BannerAdmin(admin.ModelAdmin):
+    list_display = ("id", "subtitle", "image_preview", "is_active", "order")
+    list_editable = ("is_active", "order")
+    readonly_fields = ("image_preview",)
+
+    def image_preview(self, obj):
+        from django.utils.html import mark_safe
+
+        if obj.imageURL:
+            return mark_safe(
+                f'<img src="{obj.imageURL}" style="max-height: 100px; border-radius: 5px; border: 1px solid #ccc" />'
+            )
+        return "Chưa có ảnh"
+
+    image_preview.short_description = "Ảnh xem trước"
+
 # Register your models here.
 admin.site.register(Customer)
 admin.site.register(Product, ProductAdmin)
@@ -37,5 +54,6 @@ admin.site.register(Order, OrderAdmin)
 admin.site.register(OrderItem, OrderItemAdmin)
 admin.site.register(ShippingAddress)
 admin.site.register(Category, CategoryAdmin)
+admin.site.register(Banner, BannerAdmin)
 
 

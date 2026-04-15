@@ -3,12 +3,32 @@
 {%block banner-slide %}
 <section id="heroCarousel" class="carousel slide" data-bs-ride="carousel">
   <div class="carousel-inner">
+    {% for banner in banners %}
+    <div class="carousel-item {% if forloop.first %}active{% endif %}">
+      <div
+        class="hero d-flex align-items-center"
+        style="
+          background: url('{{ banner.imageURL }}') center/cover no-repeat;
+        "
+      >
+        <div class="hero-overlay"></div>
+        <div class="container">
+          <div class="hero-content">
+            <h2>{{ banner.title|default:"" }}</h2>
+            <h1 class="fw-bold">{{ banner.subtitle|default:"" }}</h1>
+            <p>{{ banner.description|default:"" }}</p>
+            <a href="{{ banner.button_link|default:'#' }}" class="btn btn-light">{{ banner.button_text|default:'Xem chi tiết' }}</a>
+          </div>
+        </div>
+      </div>
+    </div>
+    {% empty %}
+    <!-- Fallback nếu chưa có banner nào được thêm trong Database -->
     <div class="carousel-item active">
       <div
         class="hero d-flex align-items-center"
         style="
-          background: url(&quot;https://images.unsplash.com/photo-1505691938895-1758d7feb511&quot;)
-            center/cover no-repeat;
+          background: url(&quot;https://images.unsplash.com/photo-1505691938895-1758d7feb511&quot;) center/cover no-repeat;
         "
       >
         <div class="hero-overlay"></div>
@@ -16,52 +36,13 @@
           <div class="hero-content">
             <h2>Nội Thất MOHO Chuẩn CARB-P2</h2>
             <h1 class="fw-bold">Cho Không Gian Sống An Toàn</h1>
-            <p>Ưu đãi đến 49% - 01.04 - 30.04.2026</p>
+            <p>Vui lòng vào trang Admin để thêm Banner</p>
             <a href="#" class="btn btn-light">Xem chi tiết</a>
           </div>
         </div>
       </div>
     </div>
-
-    <div class="carousel-item">
-      <div
-        class="hero d-flex align-items-center"
-        style="
-          background: url(&quot;https://images.unsplash.com/photo-1505693416388-ac5ce068fe85&quot;)
-            center/cover no-repeat;
-        "
-      >
-        <div class="hero-overlay"></div>
-        <div class="container">
-          <div class="hero-content">
-            <h2>Bộ Sưu Tập Mới</h2>
-            <h1 class="fw-bold">Không Gian Hiện Đại</h1>
-            <p>Giảm giá đến 30%</p>
-            <a href="#" class="btn btn-light">Khám phá</a>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="carousel-item">
-      <div
-        class="hero d-flex align-items-center"
-        style="
-          background: url(&quot;https://images.unsplash.com/photo-1493666438817-866a91353ca9&quot;)
-            center/cover no-repeat;
-        "
-      >
-        <div class="hero-overlay"></div>
-        <div class="container">
-          <div class="hero-content">
-            <h2>Trang Trí Nội Thất</h2>
-            <h1 class="fw-bold">Tinh Tế & Sang Trọng</h1>
-            <p>Ưu đãi đặc biệt tháng này</p>
-            <a href="#" class="btn btn-light">Xem ngay</a>
-          </div>
-        </div>
-      </div>
-    </div>
+    {% endfor %}
   </div>
 
   <!-- Controls -->

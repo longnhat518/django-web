@@ -146,12 +146,9 @@
     -->
     <script src="{%static 'app/js/owl.carousel.min.js'%}"></script>
     <script src="{%static 'app/js/all.min.js'%}"></script>
-    <script src="{%static 'app/js/myscript.js'%}"></script>
-    <script src="{%static 'app/js/cart.js'%}"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script type="text/javascript">
-      // Your JavaScript code here
-      var user = '{{ request.user }}'
+      var user = '{{ request.user }}';
+
       function getCookie(name) {
         if (document.cookie && document.cookie !== '') {
             const cookies = document.cookie.split(';');
@@ -164,8 +161,30 @@
             }
         }
         return null;
-    }
-    var csrftoken = getCookie('csrftoken')
+      }
+      var csrftoken = getCookie('csrftoken');
+
+      function getCartCookie() {
+        var cartCookie = getCookie('cart');
+        if (cartCookie == null) {
+            console.log('Cart Cookie was created!');
+            document.cookie = 'cart=' + JSON.stringify({}) + ';domain=;path=/';
+            return {};
+        } else {
+            try {
+                return JSON.parse(cartCookie);
+            } catch (e) {
+                console.error("Lỗi khi parse cart từ cookie:", e);
+                return {};
+            }
+        }
+      }
+
+      var cart = getCartCookie();
+      console.log('Cart:', cart);
     </script>
+    <script src="{%static 'app/js/myscript.js'%}"></script>
+    <script src="{%static 'app/js/cart.js'%}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
   </body>
 </html>

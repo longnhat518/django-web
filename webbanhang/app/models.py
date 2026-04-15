@@ -11,6 +11,11 @@ def image_upload_path(instance, filename):
     filename = f"{uuid.uuid4()}.{ext}"
     return f"app/static/app/images/{filename}"
 
+def banner_upload_path(instance, filename):
+    ext = filename.split('.')[-1]
+    filename = f"{uuid.uuid4()}.{ext}"
+    return f"app/static/app/images/banners/{filename}"
+
 class Customer(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE,null =True,blank= False )
     name = models.CharField(max_length = 200,null = True)
@@ -198,3 +203,50 @@ class ShippingAddress(models.Model):
 
     def __str__(self):
         return self.address
+
+class Banner(models.Model):
+    title = models.CharField(max_length=200, null=True, blank=True, verbose_name="Tiêu đề nhỏ (h2)")
+    subtitle = models.CharField(max_length=200, null=True, blank=True, verbose_name="Tiêu đề chính (h1)")
+    description = models.CharField(max_length=200, null=True, blank=True, verbose_name="Mô tả (p)")
+    image = models.ImageField(upload_to=banner_upload_path, null=True, blank=True, verbose_name="Hình nền Banner")
+    button_text = models.CharField(max_length=50, default="Xem chi tiết", verbose_name="Chữ nút bấm")
+    button_link = models.CharField(max_length=200, default="#", verbose_name="Link nút bấm")
+    is_active = models.BooleanField(default=True, verbose_name="Hiển thị")
+    order = models.IntegerField(default=0, verbose_name="Thứ tự hiển thị")
+
+    class Meta:
+        verbose_name = "Banner"
+        verbose_name_plural = "Quản lý Banner"
+        ordering = ['order', '-id']
+
+    def __str__(self):
+        return str(self.subtitle) if self.subtitle else "Banner"
+        
+    @property
+    def imageURL(self):
+        try:
+            url = self.image.url
+            url = url.replace('\\', '/')
+            if '/app/static/' in url:
+                url = url.replace('/app/static/', '/static/')
+            elif url.startswith('app/static/'):
+                url = url.replace('app/static/', '/static/')
+        except:
+            url = ''
+        return url
+
+    def clean(self):
+        from django.core.exceptions import ValidationError
+        if self.is_active:
+            # Kiểm tra xem nếu thêm banner này thì có vượt quá 5 không
+            active_banners = Banner.objects.filter(is_active=True)
+            if self.pk:
+                active_banners = active_banners.exclude(pk=self.pk)
+            if active_banners.count() >= 5:
+                raise ValidationError("Chỉ được phép thiết lập tối đa 5 Banner được hiển thị (is_active=True).")
+
+@receiver(post_delete, sender=Banner)
+def auto_delete_banner_on_delete(sender, instance, **kwargs):
+    if instance.image:
+        if os.path.isfile(instance.image.path):
+            os.remove(instance.image.path)
