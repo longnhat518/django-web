@@ -35,7 +35,9 @@
               <small class="text-muted">{{item.product.description}}</small>
 
               <div class="mt-2 d-flex align-items-center">
-                <button class="btn btn-sm btn-outline-secondary btn-minus">
+                <button class="btn btn-sm btn-outline-secondary btn-minus update-cart"
+                  data-product={{ item.product.id }}
+                  data-action ="remove">
                   -
                 </button>
                 <input
@@ -44,7 +46,9 @@
                   class="form-control form-control-sm text-center mx-2 quantity"
                   style="width: 60px"
                 />
-                <button class="btn btn-sm btn-outline-secondary btn-plus">
+                <button class="btn btn-sm btn-outline-secondary btn-plus update-cart"
+                  data-product={{ item.product.id }}
+                  data-action ="add">
                   +
                 </button>
               </div>

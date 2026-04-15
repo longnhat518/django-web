@@ -172,14 +172,23 @@
                 </div>
               </div>
               <div class="mt-auto d-flex gap-2">
+                {%if featured_product.quantity > 0 %}
                 <button
                   class="btn btn-outline-dark btn-sm flex-fill fw-bold add-btn update-cart"
                   style="border-radius: 8px; font-size: 12px"
                   data-product={{ featured_product.id }}
                   data-action ="add"
                 >
-                  <i class="fas fa-cart-plus"></i> Thêm vào giỏ
+                  <i class="fas fa-cart-plus"></i> Thêm giỏ
                 </button>
+                {%else%}
+                <button
+                  class="btn btn-outline-dark btn-sm flex-fill fw-bold add-btn update-cart"
+                  style="border-radius: 8px; font-size: 12px"
+                >
+                  <i class="fas fa-cart-plus"></i> Liên hệ
+                </button>
+                {%endif%}
                 <a
                   href="#"
                   class="btn btn-sm flex-fill fw-bold text-white shadow-sm"
@@ -190,7 +199,7 @@
                     font-size: 13px;
                     line-height: 24px;
                   "
-                  >Mua ngay</a
+                  >Xem chi tiết</a
                 >
               </div>
             </div>
@@ -233,16 +242,27 @@
                 {{ sale_product.format_old_price}}
               </div>
               <div class="d-flex justify-content-between small mt-1">
-                <span class="text-muted">{{sale_product.sold_count}}</span>
+                <span class="text-muted"> Đã bán {{sale_product.sold_count}} sản phẩm</span>
               </div>
             </div>
             <div class="mt-auto d-flex gap-2">
+              {%if sale_product.quantity > 0 %}
               <button
-                class="btn btn-outline-dark btn-sm flex-fill fw-bold add-btn"
+                class="btn btn-outline-dark btn-sm flex-fill fw-bold add-btn update-cart"
                 style="border-radius: 8px; font-size: 12px"
+                data-product={{ sale_product.id }}
+                data-action ="add"
               >
                 <i class="fas fa-cart-plus"></i> Thêm giỏ
               </button>
+              {%else%}
+              <button
+                class="btn btn-outline-dark btn-sm flex-fill fw-bold add-btn update-cart"
+                style="border-radius: 8px; font-size: 12px"
+              >
+                <i class="fas fa-cart-plus"></i> Liên hệ để đặt hàng
+              </button>
+              {%endif%}
               <a
                 href="#"
                 class="btn btn-sm flex-fill fw-bold text-white shadow-sm"
@@ -253,7 +273,7 @@
                   font-size: 13px;
                   line-height: 24px;
                 "
-                >Mua ngay</a
+                >Xem chi tiết</a
               >
             </div>
           </div>
