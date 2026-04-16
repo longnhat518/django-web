@@ -1,0 +1,81 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Poppins", sans-serif;
+}
+
+body {
+  height: 100vh;
+  background: url("https://images.unsplash.com/photo-1505691938895-1758d7feb511")
+    no-repeat center/cover;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.container {
+  width: 350px;
+  padding: 30px;
+  border-radius: 20px;
+  backdrop-filter: blur(15px);
+  background: rgba(255, 255, 255, 0.1);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+  color: #000000;
+  text-align: center;
+}
+
+h2 {
+  margin-bottom: 10px;
+  font-weight: 600;
+}
+
+p {
+  margin-bottom: 20px;
+  font-size: 14px;
+  opacity: 0.8;
+}
+
+.input-group {
+  margin-bottom: 15px;
+}
+
+.input-group input {
+  width: 100%;
+  padding: 12px 15px;
+  border: none;
+  border-radius: 25px;
+  outline: none;
+  background: rgba(255, 255, 255, 0.2);
+  color: #000000;
+}
+
+.input-group input::placeholder {
+  color: #000000;
+}
+
+.btn {
+  width: 100%;
+  padding: 12px;
+  border: none;
+  border-radius: 25px;
+  background: #f5c6aa;
+  color: #333;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.btn:hover {
+  background: #f3b394;
+}
+
+.switch {
+  margin-top: 15px;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.hidden {
+  display: none;
+}

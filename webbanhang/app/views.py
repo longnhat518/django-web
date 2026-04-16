@@ -74,3 +74,6 @@ def updateItem(request):
     if orderItem.quantity <= 0:
         orderItem.delete()
     return JsonResponse("Item was added",safe=False)
+
+def register(request):
+    return render(request, "app/register.html")

@@ -62,7 +62,12 @@
           {% else %}
           <a href="#" class="me-3" style="color: inherit; text-decoration: none;">Đăng nhập</a>
           {% endif %}
-          <a href="#" id="cartBtn">Giỏ hàng</a>
+          <a href="#" id="cartBtn" class="text-decoration-none position-relative ms-1" style="color: inherit;">
+            <i class="fas fa-shopping-cart fs-5"></i>
+            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="font-size: 0.6rem; padding: 0.25em 0.4em;">
+              {{ order.get_cart_items|default:"0" }}
+            </span>
+          </a>
         </div>
       </div>
     </nav>
