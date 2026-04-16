@@ -75,5 +75,5 @@ def updateItem(request):
         orderItem.delete()
     return JsonResponse("Item was added",safe=False)
 
-def register(request):
+def register(request):   
     return render(request, "app/register.html")
