@@ -1,9 +1,11 @@
 from itertools import product
-from django.shortcuts import render
+from django.shortcuts import render, redirect
+from django.contrib.auth import logout
 from django.http import HttpResponse, JsonResponse
 from .models import *
 import json
 from .utils import cookieCart
+from .forms import CreateUserForm
 
 # Create your views here.
 def home(request):
@@ -76,4 +78,19 @@ def updateItem(request):
     return JsonResponse("Item was added",safe=False)
 
 def register(request):
-    return render(request, "app/register.html")
+    form = CreateUserForm()
+    
+    if request.method == 'POST':
+        form = CreateUserForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('login')
+    context = {'form': form}
+    return render(request, "app/register.html", context)
+
+def login(request):
+    return render(request, "app/login.html")
+
+def logoutUser(request):
+    logout(request)
+    return redirect("home")
