@@ -22,13 +22,13 @@ class ProductAdmin(admin.ModelAdmin):
 class OrderAdmin(admin.ModelAdmin):
     list_display = ('customer', 'date_ordered', 'complete', 'transaction_id')
     list_filter = ('complete', 'date_ordered')
-    search_fields = ('customer__name', 'transaction_id')
+    search_fields = ('customer__username', 'transaction_id')
     list_editable = ('complete',)
 
 class OrderItemAdmin(admin.ModelAdmin):
     list_display = ('product', 'order', 'quantity', 'date_added')
     list_filter = ('date_added',)
-    search_fields = ('product__name', 'order__customer__name')
+    search_fields = ('product__name', 'order__customer__username')
     list_editable = ('quantity',)
 
 class BannerAdmin(admin.ModelAdmin):
@@ -48,7 +48,6 @@ class BannerAdmin(admin.ModelAdmin):
     image_preview.short_description = "Ảnh xem trước"
 
 # Register your models here.
-admin.site.register(Customer)
 admin.site.register(Product, ProductAdmin)
 admin.site.register(Order, OrderAdmin)
 admin.site.register(OrderItem, OrderItemAdmin)

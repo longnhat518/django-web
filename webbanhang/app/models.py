@@ -16,19 +16,6 @@ def banner_upload_path(instance, filename):
     filename = f"{uuid.uuid4()}.{ext}"
     return f"app/static/app/images/banners/{filename}"
 
-class Customer(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE,null =True,blank= False )
-    name = models.CharField(max_length = 200,null = True)
-    email = models.CharField(max_length=200, null=True)
-    phone = models.CharField(max_length=200, null=True)
-    address = models.CharField(max_length=200, null=True)
-    city = models.CharField(max_length=200, null=True)
-    country = models.CharField(max_length=200, null=True)
-    
-
-    def __str__(self):
-        return self.name
-
 class Category(models.Model):
     is_sub = models.BooleanField(default=False)
     name = models.CharField(max_length=200, null=True)
@@ -127,7 +114,7 @@ def auto_delete_file_on_delete(sender, instance, **kwargs):
             os.remove(instance.image.path)
 
 class Order(models.Model):
-    customer = models.ForeignKey(Customer, on_delete=models.SET_NULL, null=True, blank=True)
+    customer = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
     date_ordered = models.DateTimeField(auto_now_add=True)
     complete = models.BooleanField(default=False, blank=True)
     transaction_id = models.CharField(max_length=100, null=True)
@@ -193,7 +180,7 @@ class OrderItem(models.Model):
             return '0₫'
 
 class ShippingAddress(models.Model):
-    customer = models.ForeignKey(Customer, on_delete=models.SET_NULL, null=True, blank=True)
+    customer = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
     order = models.ForeignKey(Order, on_delete=models.SET_NULL, null=True, blank=True)
     address = models.CharField(max_length=200, null=True)
     city = models.CharField(max_length=200, null=True)
