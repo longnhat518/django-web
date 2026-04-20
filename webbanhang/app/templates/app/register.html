@@ -12,58 +12,85 @@
 
   <div class="container">
 
-    <!-- LOGIN -->
-    <div id="loginForm">
-      <h2>Login</h2>
-      <p>Have an account?</p>
-
-      <div class="input-group">
-        <input type="text" placeholder="Username">
-      </div>
-
-      <div class="input-group">
-        <input type="password" placeholder="Password">
-      </div>
-
-      <button class="btn">SIGN IN</button>
-
-      <div class="switch" onclick="toggleForm()">
-        Chưa có tài khoản? Đăng ký
-      </div>
-    </div>
-
     <!-- REGISTER -->
-    <div id="registerForm" class="hidden">
+    <div id="registerForm">
+      <form action="" method = "POST">
+      {% csrf_token %}
       <h2>Register</h2>
       <p>Create new account</p>
 
-      <div class="input-group">
-        <input type="text" placeholder="Username">
+      {% if form.errors %}
+        <div class="alert alert-danger" style="color: #ff4d4d; font-size: 0.85rem; margin-bottom: 15px; text-align: left; padding: 10px; border-radius: 5px; background: rgba(255, 77, 77, 0.1);">
+          {% for field in form %}
+            {% for error in field.errors %}
+              <p style="margin: 0;">• {{ error }}</p>
+            {% endfor %}
+          {% endfor %}
+          {% for error in form.non_field_errors %}
+            <p style="margin: 0;">• {{ error }}</p>
+          {% endfor %}
+        </div>
+      {% endif %}
+
+       <div class="input-group">
+        <input type="text" name="username" placeholder="Username" required value="{{form.username.value|default:''}}">
       </div>
 
       <div class="input-group">
-        <input type="email" placeholder="Email">
+        <input type="text" name="first_name" placeholder="First Name" required value="{{form.first_name.value|default:''}}">
       </div>
 
       <div class="input-group">
-        <input type="password" placeholder="Password">
+        <input type="text" name="last_name" placeholder="Last Name" required value="{{form.last_name.value|default:''}}">
       </div>
 
-      <button class="btn">SIGN UP</button>
-
-      <div class="switch" onclick="toggleForm()">
-        Đã có tài khoản? Đăng nhập
+      <div class="input-group">
+        <input type="email" name="email" placeholder="Email" required value="{{form.email.value|default:''}}">
       </div>
+
+      <div class="input-group">
+        <input type="password" name="password1" id="password" placeholder="Password" required>
+      </div>
+
+      <div class="input-group">
+        <input type="password" name="password2" id="confirm_password" placeholder="Confirm Password" required oninput="checkMatch()">
+        <small id="matching-msg" style="display: block; margin-top: 5px; font-size: 0.75rem; transition: 0.3s;"></small>
+      </div>
+
+      <button class="btn" id="reg-btn">ĐĂNG KÝ</button>
+
+      <div class="switch">
+        Đã có tài khoản? <a href="{%url 'login'%}">Đăng nhập</a>
+      </div>
+      <div class="switch">
+        Hoặc quay về <a href="{%url 'home'%}">trang chủ</a> mua hàng
+      </div>
+      </form>
     </div>
 
-  </div>
+    <script>
+      function checkMatch() {
+        const p1 = document.getElementById('password').value;
+        const p2 = document.getElementById('confirm_password').value;
+        const msg = document.getElementById('matching-msg');
+        const btn = document.getElementById('reg-btn');
 
-  <script>
-    function toggleForm() {
-      document.getElementById('loginForm').classList.toggle('hidden');
-      document.getElementById('registerForm').classList.toggle('hidden');
-    }
-  </script>
+        if (!p2) {
+          msg.innerText = '';
+          return;
+        }
+
+        if (p1 === p2) {
+          msg.innerText = '✓ Passwords match';
+          msg.style.color = '#2ecc71';
+        } else {
+          msg.innerText = '✗ Passwords do not match';
+          msg.style.color = '#ff4d4d';
+        }
+      }
+    </script>
+
+  </div>
 
 </body>
 </html>

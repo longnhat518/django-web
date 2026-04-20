@@ -1,15 +1,18 @@
 from itertools import product
-from django.shortcuts import render
+from django.shortcuts import render, redirect
+from django.contrib.auth import authenticate, login, logout
+from django.contrib import messages
 from django.http import HttpResponse, JsonResponse
 from .models import *
 import json
 from .utils import cookieCart
+from .forms import CreateUserForm
 
 # Create your views here.
 def home(request):
     customer = None
     if request.user.is_authenticated:
-        customer = getattr(request.user, "customer", None)
+        customer, created = Customer.objects.get_or_create(user=request.user, defaults={'name': request.user.username, 'email': request.user.email})
         order, created = Order.objects.get_or_create(customer=customer, complete=False)
         items = order.orderitem_set.all()
     else:
@@ -35,7 +38,7 @@ def home(request):
 def cart(request):
     customer = None
     if request.user.is_authenticated:
-        customer = getattr(request.user, "customer", None)
+        customer, created = Customer.objects.get_or_create(user=request.user, defaults={'name': request.user.username, 'email': request.user.email})
         order, created = Order.objects.get_or_create(customer=customer, complete=False)
         items = order.orderitem_set.all()
     else:
@@ -48,7 +51,7 @@ def cart(request):
 def checkout(request):
     customer = None
     if request.user.is_authenticated:
-        customer = getattr(request.user, "customer", None)
+        customer, created = Customer.objects.get_or_create(user=request.user, defaults={'name': request.user.username, 'email': request.user.email})
         order, created = Order.objects.get_or_create(customer=customer, complete=False)
         items = order.orderitem_set.all()
     else:
@@ -62,7 +65,7 @@ def updateItem(request):
     data = json.loads(request.body)
     productId = data['productId']
     action = data['action']
-    customer = request.user.customer
+    customer, created = Customer.objects.get_or_create(user=request.user, defaults={'name': request.user.username, 'email': request.user.email})
     product = Product.objects.get(id = productId)
     order, created = Order.objects.get_or_create(customer=customer, complete=False)
     orderItem, created = OrderItem.objects.get_or_create(order=order, product=product)
@@ -75,5 +78,33 @@ def updateItem(request):
         orderItem.delete()
     return JsonResponse("Item was added",safe=False)
 
-def register(request):   
-    return render(request, "app/register.html")
+def register(request):
+    form = CreateUserForm()
+    
+    if request.method == 'POST':
+        form = CreateUserForm(request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Đăng ký thành công! Hãy đăng nhập.')
+            return redirect('login')
+    context = {'form': form}
+    return render(request, "app/register.html", context)
+
+def loginView(request):
+    if request.user.is_authenticated:
+        return redirect("home")
+    if request.method =="POST":
+        username = request.POST.get("username")
+        password = request.POST.get("password")
+        user = authenticate(request, username=username, password=password)
+        if user is not None:
+            login(request, user)
+            return redirect("home")
+        else:
+            messages.error(request, "Tên đăng nhập hoặc mật khẩu không chính xác.")
+    
+    return render(request, "app/login.html")
+
+def logoutUser(request):
+    logout(request)
+    return redirect("login")
