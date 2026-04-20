@@ -32,8 +32,16 @@
         </div>
       {% endif %}
 
-      <div class="input-group">
+       <div class="input-group">
         <input type="text" name="username" placeholder="Username" required value="{{form.username.value|default:''}}">
+      </div>
+
+      <div class="input-group">
+        <input type="text" name="first_name" placeholder="First Name" required value="{{form.first_name.value|default:''}}">
+      </div>
+
+      <div class="input-group">
+        <input type="text" name="last_name" placeholder="Last Name" required value="{{form.last_name.value|default:''}}">
       </div>
 
       <div class="input-group">
@@ -53,6 +61,9 @@
 
       <div class="switch">
         Đã có tài khoản? <a href="{%url 'login'%}">Đăng nhập</a>
+      </div>
+      <div class="switch">
+        Hoặc quay về <a href="{%url 'home'%}">trang chủ</a> mua hàng
       </div>
       </form>
     </div>

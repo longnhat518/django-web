@@ -16,21 +16,25 @@
       <!-- LOGIN -->
       <div id="loginForm">
         <form action="" method="post">
+          {% csrf_token %}
           <h2>Đăng nhập</h2>
           <p>Bạn đã có tài khoản?</p>
 
           <div class="input-group">
-            <input type="text" placeholder="Username" />
+            <input type="text" name="username" placeholder="Username" />
           </div>
 
           <div class="input-group">
-            <input type="password" placeholder="Password" />
+            <input type="password" name="password" placeholder="Password" />
           </div>
 
           <button class="btn">ĐĂNG NHẬP</button>
 
           <div class="switch">
             Chưa có tài khoản? <a href="{%url 'register'%}">Đăng ký</a>
+          </div>
+          <div class="switch">
+            Hoặc quay về <a href="{%url 'home'%}">trang chủ</a> mua hàng
           </div>
         </form>
       </div>
