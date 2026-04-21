@@ -40,12 +40,15 @@
             </li>
             <li class="nav-item"><a class="nav-link" href="#">Tin tức</a></li>
           </ul>
-          <form class="d-flex me-3">
+          <form class="d-flex gap-2 me-3" method="POST" role="search" action="{% url 'search' %}">
+            {% csrf_token %}
             <input
               class="form-control"
               type="search"
               placeholder="Tìm kiếm sản phẩm..."
+              name="search"
             />
+            <button class="btn btn-outline-success" type="submit">Search</button>
           </form>
           {% if customer %}
           <div class="dropdown me-3">
@@ -117,6 +120,7 @@
     {% block cart_content %} {% endblock cart_content %}
     {% block content_checkout %} {% endblock content_checkout %}
     {% block cart_list %} {% endblock cart_list %}
+    {% block search %} {% endblock search %}
     <!-- End Main -->
     <footer style="color: white;" 
       class="container--fluid bg-black text-center fixed-bottom p-2 mt-5"

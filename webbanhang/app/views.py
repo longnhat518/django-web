@@ -108,3 +108,10 @@ def loginView(request):
 def logoutUser(request):
     logout(request)
     return redirect("login")
+
+def search(request):
+    if request.method == "POST":
+        search_query = request.POST.get("search")
+        products = Product.objects.filter(name__icontains=search_query)
+        context = {'search':search_query,'products': products}
+        return render(request, "app/search.html", context)
