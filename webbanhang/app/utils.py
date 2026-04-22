@@ -29,7 +29,7 @@ def cookieCart(request):
                     'imageURL':product.imageURL,
                     'format_price':product.format_price,
                     'format_old_price':product.format_old_price,
-                    'category':product.category,
+                    'category_names':product.category_names,
                 },
                 'quantity':cart[i]["quantity"],
                 'get_total':total,

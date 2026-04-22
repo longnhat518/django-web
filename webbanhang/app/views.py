@@ -23,6 +23,7 @@ def home(request):
     featured_products = Product.objects.filter(is_featured=True)
     sale_products = Product.objects.filter(is_on_sale=True)
     banners = Banner.objects.filter(is_active=True).order_by('order')[:5]
+    categories = Category.objects.filter(is_sub=False)
     
     context = {
         'products': products,
@@ -32,6 +33,7 @@ def home(request):
         'items': items,
         'order': order,
         'customer': customer,
+        'categories': categories,
     }
     return render(request, "app/home.html", context)
 
@@ -110,8 +112,32 @@ def logoutUser(request):
     return redirect("login")
 
 def search(request):
+    if request.user.is_authenticated:
+        customer = request.user
+        order, created = Order.objects.get_or_create(customer=customer, complete=False)
+        items = order.orderitem_set.all()
+    else:
+        cookieData = cookieCart(request)
+        items = cookieData['items']
+        order = cookieData['order']
     if request.method == "POST":
         search_query = request.POST.get("search")
         products = Product.objects.filter(name__icontains=search_query)
-        context = {'search':search_query,'products': products}
+        context = {'search':search_query,'products': products, 'items': items, 'order': order, 'customer': customer}
         return render(request, "app/search.html", context)
+
+def category(request):
+    if request.user.is_authenticated:
+        customer = request.user
+        order, created = Order.objects.get_or_create(customer=customer, complete=False)
+        items = order.orderitem_set.all()
+    else:
+        cookieData = cookieCart(request)
+        items = cookieData['items']
+        order = cookieData['order']
+    categories = Category.objects.filter(is_sub=False)
+    active_category = request.GET.get('category','')
+    if active_category:
+        products = Product.objects.filter(category__slug=active_category)
+    context = {'products': products, 'categories': categories, 'active_category': active_category, 'items': items, 'order': order, 'customer': customer}
+    return render(request, "app/category.html", context)

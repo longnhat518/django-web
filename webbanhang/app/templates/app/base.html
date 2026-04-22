@@ -31,7 +31,14 @@
         </button>
         <div class="collapse navbar-collapse" id="nav">
           <ul class="navbar-nav me-auto ms-3">
-            <li class="nav-item"><a class="nav-link" href="#">Sản phẩm</a></li>
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">Sản phẩm</a>
+              <ul class="dropdown-menu">
+                {% for category in categories %}
+                <li><a class="dropdown-item" href="{% url 'category' %}?category={{category.slug}}">{{category.name}}</a></li>
+                {% endfor %}
+              </ul>
+            </li>
             <li class="nav-item">
               <a class="nav-link" href="#">Thiết kế - Thi công</a>
             </li>
@@ -83,7 +90,7 @@
           <img src="{{item.product.imageURL}}" class="border" style="width: 80px; height: 80px; object-fit: cover;">
           <div class="flex-grow-1 ms-3">
             <div class="fw-bold text-uppercase" style="font-size: 12px; color: #4a4a4a; line-height: 1.4;">{{item.product.name}}</div>
-            <div class="text-uppercase text-muted" style="font-size: 11px; margin-top: 6px;">{{item.product.category.name|default:""}}</div>
+            <div class="text-uppercase text-muted" style="font-size: 11px; margin-top: 6px;">{{item.product.category_names|default:""}}</div>
             
             <div class="d-flex justify-content-between align-items-center mt-2">
               <div class="d-flex align-items-center">
@@ -121,6 +128,7 @@
     {% block content_checkout %} {% endblock content_checkout %}
     {% block cart_list %} {% endblock cart_list %}
     {% block search %} {% endblock search %}
+    {% block category %} {% endblock category %}
     <!-- End Main -->
     <footer style="color: white;" 
       class="container--fluid bg-black text-center fixed-bottom p-2 mt-5"

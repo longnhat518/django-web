@@ -27,7 +27,7 @@ class Category(models.Model):
 
 class Product(models.Model):
     name = models.CharField(max_length=200, null=True, verbose_name="Tên sản phẩm")
-    category = models.ForeignKey(Category, on_delete=models.SET_NULL, null=True, blank=True, verbose_name="Danh mục")
+    category = models.ManyToManyField(Category, blank=True, verbose_name="Danh mục")
     price = models.FloatField(verbose_name="Giá bán")
     old_price = models.FloatField(null=True, blank=True, verbose_name="Giá gốc (chưa giảm)")
     is_featured = models.BooleanField(default=False, verbose_name="Sản phẩm Best Seller")
@@ -42,6 +42,10 @@ class Product(models.Model):
 
     def __str__(self):
         return self.name
+
+    @property
+    def category_names(self):
+        return ", ".join([c.name for c in self.category.all() if c.name])
 
     @property
     def short_name(self):
