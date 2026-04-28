@@ -11,7 +11,7 @@
       {% for product in products %}
       <div class="col-md-3">
         <div class="card product-card position-relative">
-          <span class="badge bg-danger discount-badge">-33%</span>
+          <span class="badge bg-danger discount-badge">{% if product.discount_percentage > 0 %}-{{ product.discount_percentage }}%{% endif %}</span>
           <div class="img-wrap">
             <img src="{{ product.imageURL }}" class="first-img" />
             <img src="{{ product.hover_imageURL }}" class="second-img" />

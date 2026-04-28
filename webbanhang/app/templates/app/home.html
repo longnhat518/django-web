@@ -128,7 +128,7 @@
         <div class="swiper-slide" style="width: 260px">
           <div class="card product-card position-relative">
             <span class="badge bg-danger discount-badge"
-              >-{{featured_product.discount_percentage}}%</span
+              >{% if featured_product.discount_percentage > 0 %}-{{ featured_product.discount_percentage }}%{% endif %}</span
             >
             <div class="img-wrap">
               <a href=""
@@ -208,7 +208,7 @@
       {% for sale_product in sale_products %}
       <div class="col-md-3">
         <div class="card product-card position-relative">
-          <span class="badge bg-danger discount-badge">-33%</span>
+          <span class="badge bg-danger discount-badge">{% if sale_product.discount_percentage > 0 %}-{{ sale_product.discount_percentage }}%{% endif %}</span>
           <div class="img-wrap">
             <img src="{{ sale_product.imageURL }}" class="first-img" />
             <img src="{{ sale_product.hover_imageURL }}" class="second-img" />
