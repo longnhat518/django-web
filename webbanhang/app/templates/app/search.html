@@ -1,9 +1,16 @@
 {% extends 'app/base.html' %} 
 {% load static%} 
 {%block search%}
-    <h4>Search for {{search}}</h4>
+    
     <section class="py-5 bg-light">
   <div class="container">
+    {% if not products %}
+      <div class="alert alert-warning" role="alert">
+    Không có kết quả nào được tìm thấy cho từ khoá "{{search}}". Quay lại <a href="{% url 'home' %}">trang chủ</a>
+  </div>
+  
+    {%else%}
+    <h4>Tìm kiếm kết quả cho "{{search}}"</h4>
     <div class="d-flex justify-content-between mb-4">
       <a href="#">Xem thêm</a>
     </div>
@@ -14,11 +21,13 @@
         <div class="card product-card position-relative">
           <span class="badge bg-danger discount-badge">-33%</span>
           <div class="img-wrap">
-            <img src="{{ product.imageURL }}" class="first-img" />
-            <img src="{{ product.hover_imageURL }}" class="second-img" />
+            <a href="{% if product.slug %}{% url 'detail' product.slug %}{% else %}#{% endif %}">
+              <img src="{{ product.imageURL }}" class="first-img" />
+              <img src="{{ product.hover_imageURL }}" class="second-img" />
+            </a>
           </div>
           <div class="card-body d-flex flex-column">
-            <h6>{{ product.short_name}}</h6>
+            <h6> <a style="text-decoration: none; color: #000;" href="{% if product.slug %}{% url 'detail' product.slug %}{% else %}#{% endif %}"> {{ product.short_name}}</a></h6>
             <div>
               <span class="text-danger fw-bold"
                 >{{ product.format_price}}</span
@@ -49,7 +58,7 @@
               </button>
               {%endif%}
               <a
-                href="#"
+                href="{% if product.slug %}{% url 'detail' product.slug %}{% else %}#{% endif %}"
                 class="btn btn-sm flex-fill fw-bold text-white shadow-sm"
                 style="
                   border-radius: 8px;
@@ -67,5 +76,6 @@
       {% endfor %}
     </div>
   </div>
+  {%endif%}
 </section>
 {%endblock search%}

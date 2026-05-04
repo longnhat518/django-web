@@ -1,0 +1,215 @@
+{% extends 'app/base.html' %}
+{% load static %}
+{% block main-content %}
+<div class="container py-4" style="margin-top: 10px;">
+    <!-- Breadcrumb -->
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb" style="font-size: 13px;">
+            <li class="breadcrumb-item"><a href="{% url 'home' %}" class="text-decoration-none text-muted">Trang chủ</a></li>
+            <li class="breadcrumb-item"><a href="#" class="text-decoration-none text-muted">Tất cả sản phẩm</a></li>
+            <li class="breadcrumb-item active" aria-current="page">{{ product.name }}</li>
+        </ol>
+    </nav>
+    <hr class="mb-4">
+
+    <div class="row gx-5">
+        <!-- Left Column: Image Gallery -->
+        <div class="col-lg-7">
+            <div class="row">
+                <!-- Thumbnails -->
+                <div class="col-2 d-flex flex-column gap-2" id="thumbnail-container">
+                    {% for image in product.images.all %}
+                    <img src="{{ image.imageURL }}" 
+                         class="img-fluid border thumbnail-img {% if forloop.first %}active-thumbnail{% endif %}" 
+                         alt="{{ product.name }}"
+                         style="cursor: pointer; object-fit: cover; aspect-ratio: 1; opacity: {% if forloop.first %}1{% else %}0.6{% endif %};"
+                         onclick="changeMainImage(this, '{{ image.imageURL }}')">
+                    {% empty %}
+                    <img src="{% static 'app/images/placeholder.png' %}" class="img-fluid border active-thumbnail" style="cursor: pointer; object-fit: cover; aspect-ratio: 1;">
+                    {% endfor %}
+                    <!-- Placeholder for video if exists -->
+                    <div class="border d-flex align-items-center justify-content-center text-center flex-column" style="cursor: pointer; aspect-ratio: 1; font-size: 10px; background: #f8f9fa;">
+                        <i class="fas fa-play mb-1"></i>
+                        XEM VIDEO
+                    </div>
+                </div>
+                <!-- Main Image -->
+                <div class="col-10">
+                    <img id="main-image" src="{{ product.imageURL }}" class="img-fluid w-100" alt="{{ product.name }}" style="object-fit: cover; border-radius: 4px;">
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Column: Product Info -->
+        <div class="col-lg-5">
+            <h1 class="fw-bold fs-4 mb-3" style="line-height: 1.4;">{{ product.name }}</h1>
+            
+            <div class="d-flex align-items-center mb-3" style="font-size: 13px;">
+                <div class="text-warning me-2">
+                    <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star-half-alt"></i>
+                </div>
+                <span class="text-muted me-3">(18)</span>
+                <span class="text-muted me-3 border-start ps-3">Chia sẻ: <i class="fab fa-facebook text-primary fs-5 ms-1 align-middle"></i></span>
+                <span class="text-muted border-start ps-3">Đã bán: {{ product.sold_count|default:"0" }}</span>
+            </div>
+            
+            <p class="text-muted mb-3" style="font-size: 13px;">SKU: {{ product.sku|default:"N/A" }}</p>
+            
+            <hr>
+            
+            <div class="d-flex align-items-center mb-4">
+                {% if product.old_price %}
+                <span class="badge bg-danger rounded-0 fs-6 py-1 px-2 me-3">-{{ product.discount_percentage }}%</span>
+                <span class="fw-bold fs-3 text-danger me-3" style="color: #e65540 !important;">{{ product.format_price }}</span>
+                <span class="text-muted text-decoration-line-through fs-6">{{ product.format_old_price }}</span>
+                {% else %}
+                <span class="fw-bold fs-3 text-danger me-3" style="color: #e65540 !important;">{{ product.format_price }}</span>
+                {% endif %}
+            </div>
+
+            <!-- Color Options -->
+            <div class="mb-4">
+                <p class="mb-2" style="font-size: 14px;">Màu sắc: <strong>Trắng - Xám</strong> (mẫu)</p>
+                <div class="d-flex gap-2">
+                    <div class="rounded-circle border border-dark p-1" style="width: 32px; height: 32px; cursor: pointer;">
+                        <div class="rounded-circle w-100 h-100" style="background-color: #f1f1f1;"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Specs -->
+            <div class="mb-4" style="font-size: 14px; line-height: 1.6;">
+                <p class="fw-bold mb-1">Kích thước:</p>
+                <div class="text-muted mb-3">
+                    {{ product.size_info|default:"Đang cập nhật"|linebreaksbr }}
+                </div>
+                
+                <p class="fw-bold mb-1">Chất liệu:</p>
+                <div class="text-muted mb-3">
+                    {{ product.material_info|default:"Đang cập nhật"|linebreaksbr }}
+                </div>
+                <p class="text-muted fst-italic" style="font-size: 13px;">(*) Tiêu chuẩn California Air Resources Board xuất khẩu Mỹ, đảm bảo gỗ không độc hại, an toàn cho sức khỏe.</p>
+            </div>
+
+            <!-- Action buttons -->
+            <div class="d-flex align-items-center mb-3">
+                <div class="input-group me-3" style="width: 120px;">
+                    <button class="btn btn-outline-secondary rounded-0 px-3 quantity-btn" type="button" onclick="changeQuantity(-1)">-</button>
+                    <input type="text" class="form-control text-center rounded-0 border-secondary" id="product-quantity" value="1" readonly>
+                    <button class="btn btn-outline-secondary rounded-0 px-3 quantity-btn" type="button" onclick="changeQuantity(1)">+</button>
+                </div>
+                <button class="btn btn-primary rounded-0 flex-grow-1 fw-bold py-2 add-to-cart-detail" style="background-color: #215e80; border-color: #215e80;" data-product="{{ product.id }}">
+                    THÊM VÀO GIỎ
+                </button>
+            </div>
+            <button class="btn btn-danger w-100 rounded-0 fw-bold py-2 mb-4" style="background-color: #f26522; border-color: #f26522;">
+                MUA NGAY
+            </button>
+
+            <!-- Shipping Policy -->
+            <div class="text-muted" style="font-size: 13px;">
+                <p><i class="fas fa-check text-success me-1"></i> Miễn phí giao hàng & lắp đặt tại tất cả quận huyện thuộc TP.HCM, Hà Nội, Khu đô thị Ecopark, Biên Hòa và một số quận thuộc Bình Dương (*)</p>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Description Tabs (Optional) -->
+    <div class="row mt-5">
+        <div class="col-12">
+            <ul class="nav nav-tabs border-bottom mb-4" id="myTab" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active rounded-0 text-dark fw-bold border-top-0 border-end-0 border-start-0" style="border-bottom-width: 3px;" id="desc-tab" data-bs-toggle="tab" data-bs-target="#desc" type="button" role="tab">MÔ TẢ SẢN PHẨM</button>
+                </li>
+            </ul>
+            <div class="tab-content" id="myTabContent">
+                <div class="tab-pane fade show active text-muted" id="desc" role="tabpanel" style="font-size: 15px; line-height: 1.8;">
+                    {{ product.description|default:"Chưa có mô tả cho sản phẩm này."|linebreaks }}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function changeMainImage(element, imageUrl) {
+        document.getElementById('main-image').src = imageUrl;
+        // reset opacity of all thumbnails
+        let thumbnails = document.querySelectorAll('.thumbnail-img');
+        thumbnails.forEach(thumb => {
+            thumb.style.opacity = '0.6';
+            thumb.classList.remove('active-thumbnail');
+        });
+        // set opacity of clicked thumbnail
+        element.style.opacity = '1';
+        element.classList.add('active-thumbnail');
+    }
+
+    function changeQuantity(change) {
+        let input = document.getElementById('product-quantity');
+        let currentVal = parseInt(input.value);
+        let newVal = currentVal + change;
+        if(newVal >= 1) {
+            input.value = newVal;
+        }
+    }
+
+    document.querySelector('.add-to-cart-detail').addEventListener('click', function() {
+        var productId = this.dataset.product;
+        var action = 'add';
+        var quantity = parseInt(document.getElementById('product-quantity').value);
+        
+        console.log('productId:', productId, 'Action:', action, 'Quantity:', quantity);
+        console.log('USER:', user);
+
+        if (user === 'AnonymousUser') {
+            addCookieItemDetail(productId, action, quantity);
+        } else {
+            updateUserOrderDetail(productId, action, quantity);
+        }
+    });
+
+    function updateUserOrderDetail(productId, action, quantity) {
+        console.log('User is authenticated, sending data...');
+        var url = '/update_item/';
+        fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': csrftoken,
+            },
+            body: JSON.stringify({
+                'productId': productId,
+                'action': action,
+                'quantity': quantity
+            })
+        })
+        .then((response) => response.json())
+        .then((data) => {
+            console.log('Data:', data);
+            location.reload();
+        });
+    }
+
+    function addCookieItemDetail(productId, action, quantity) {
+        console.log('User is not authenticated');
+        if (action == 'add') {
+            if (cart[productId] == undefined) {
+                cart[productId] = { 'quantity': quantity };
+            } else {
+                cart[productId]['quantity'] += quantity;
+            }
+        }
+
+        if (action == 'remove') {
+            cart[productId]['quantity'] -= 1;
+            if (cart[productId]['quantity'] <= 0) {
+                console.log('Item should be deleted');
+                delete cart[productId];
+            }
+        }
+        console.log('CART:', cart);
+        document.cookie = 'cart=' + JSON.stringify(cart) + ";domain=;path=/";
+        location.reload();
+    }
+</script>
+{% endblock main-content %}

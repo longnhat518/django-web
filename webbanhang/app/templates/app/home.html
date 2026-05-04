@@ -131,7 +131,7 @@
               >{% if featured_product.discount_percentage > 0 %}-{{ featured_product.discount_percentage }}%{% endif %}</span
             >
             <div class="img-wrap">
-              <a href=""
+              <a href="{% if featured_product.slug %}{% url 'detail' featured_product.slug %}{% else %}#{% endif %}"
                 ><img
                   src="{{ featured_product.imageURL }}"
                   class="card-img-top first-img" />
@@ -142,7 +142,9 @@
             </div>
             <div class="card-body d-flex flex-column">
               <h6 title="{{featured_product.name}}">
-                {{featured_product.short_name}}
+                <a style="text-decoration: none; color: #000;" href="{% if featured_product.slug %}{% url 'detail' featured_product.slug %}{% else %}#{% endif %}">
+                  {{featured_product.short_name}}
+                </a>
               </h6>
               <div class="mb-3">
                 <span class="text-danger fw-bold fs-5"
@@ -171,7 +173,7 @@
                 </button>
                 {%endif%}
                 <a
-                  href="#"
+                  href="{% if featured_product.slug %}{% url 'detail' featured_product.slug %}{% else %}#{% endif %}"
                   class="btn btn-sm flex-fill fw-bold text-white shadow-sm"
                   style="
                     border-radius: 8px;
@@ -210,11 +212,13 @@
         <div class="card product-card position-relative">
           <span class="badge bg-danger discount-badge">{% if sale_product.discount_percentage > 0 %}-{{ sale_product.discount_percentage }}%{% endif %}</span>
           <div class="img-wrap">
-            <img src="{{ sale_product.imageURL }}" class="first-img" />
-            <img src="{{ sale_product.hover_imageURL }}" class="second-img" />
+            <a href="{% if sale_product.slug %}{% url 'detail' sale_product.slug %}{% else %}#{% endif %}">
+              <img src="{{ sale_product.imageURL }}" class="first-img" />
+              <img src="{{ sale_product.hover_imageURL }}" class="second-img" />
+            </a>
           </div>
           <div class="card-body d-flex flex-column">
-            <h6>{{ sale_product.short_name}}</h6>
+            <h6><a style="text-decoration: none; color: #000;" href="{% if sale_product.slug %}{% url 'detail' sale_product.slug %}{% else %}#{% endif %}"> {{ sale_product.short_name}}</a></h6>
             <div>
               <span class="text-danger fw-bold"
                 >{{ sale_product.format_price}}</span
@@ -245,7 +249,7 @@
               </button>
               {%endif%}
               <a
-                href="#"
+                href="{% if sale_product.slug %}{% url 'detail' sale_product.slug %}{% else %}#{% endif %}"
                 class="btn btn-sm flex-fill fw-bold text-white shadow-sm"
                 style="
                   border-radius: 8px;

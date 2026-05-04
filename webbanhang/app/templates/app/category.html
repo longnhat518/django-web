@@ -13,8 +13,10 @@
         <div class="card product-card position-relative">
           <span class="badge bg-danger discount-badge">{% if product.discount_percentage > 0 %}-{{ product.discount_percentage }}%{% endif %}</span>
           <div class="img-wrap">
-            <img src="{{ product.imageURL }}" class="first-img" />
-            <img src="{{ product.hover_imageURL }}" class="second-img" />
+            <a href="{% if product.slug %}{% url 'detail' product.slug %}{% else %}#{% endif %}">
+              <img src="{{ product.imageURL }}" class="first-img" />
+              <img src="{{ product.hover_imageURL }}" class="second-img" />
+            </a>
           </div>
           <div class="card-body d-flex flex-column">
             <h6>{{ product.short_name}}</h6>
@@ -48,7 +50,7 @@
               </button>
               {%endif%}
               <a
-                href="#"
+                href="{% if product.slug %}{% url 'detail' product.slug %}{% else %}#{% endif %}"
                 class="btn btn-sm flex-fill fw-bold text-white shadow-sm"
                 style="
                   border-radius: 8px;

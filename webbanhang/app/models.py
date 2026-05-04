@@ -4,6 +4,7 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.db.models.signals import post_delete
 from django.dispatch import receiver
+from django.utils.text import slugify
 # Create your models here.
 
 def image_upload_path(instance, filename):
@@ -35,6 +36,11 @@ class Product(models.Model):
     digital = models.BooleanField(default=False, null=True, blank=False, verbose_name="Sản phẩm Kỹ thuật số (Không ship)")
     sold_count = models.IntegerField(default=0, null=True, blank=True, verbose_name="Đã bán được")
     quantity = models.IntegerField(default=0, null=True, blank=True, verbose_name="Số lượng")
+    slug = models.SlugField(max_length=200, unique=True, null=True, blank=True, verbose_name="Đường dẫn (Slug)")
+    sku = models.CharField(max_length=50, null=True, blank=True, verbose_name="Mã SKU")
+    description = models.TextField(null=True, blank=True, verbose_name="Mô tả sản phẩm")
+    size_info = models.TextField(null=True, blank=True, verbose_name="Thông tin kích thước")
+    material_info = models.TextField(null=True, blank=True, verbose_name="Thông tin chất liệu")
 
     class Meta:
         verbose_name = "Sản phẩm"
@@ -42,6 +48,17 @@ class Product(models.Model):
 
     def __str__(self):
         return self.name
+
+    def save(self, *args, **kwargs):
+        if not self.slug and self.name:
+            base_slug = slugify(self.name)
+            slug = base_slug
+            counter = 1
+            while Product.objects.filter(slug=slug).exists():
+                slug = f'{base_slug}-{counter}'
+                counter += 1
+            self.slug = slug
+        super().save(*args, **kwargs)
 
     @property
     def category_names(self):

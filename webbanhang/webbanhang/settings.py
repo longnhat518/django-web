@@ -82,7 +82,7 @@ WSGI_APPLICATION = "webbanhang.wsgi.application"
 #     }
 # }
 
-SUPABASE_DB_URL = "postgresql://postgres.rconrcldhywtbwinxrno:[password]@aws-1-ap-south-1.pooler.supabase.com:6543/postgres"
+SUPABASE_DB_URL = "postgresql://postgres.rconrcldhywtbwinxrno:buitien1231@aws-1-ap-south-1.pooler.supabase.com:6543/postgres"
 DATABASES = {
     "default": dj_database_url.parse(SUPABASE_DB_URL, conn_max_age=600),
 }
@@ -95,15 +95,15 @@ AUTH_PASSWORD_VALIDATORS = [
     {
         "NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator",
     },
-    {
-        "NAME": "django.contrib.auth.password_validation.MinimumLengthValidator",
-    },
-    {
-        "NAME": "django.contrib.auth.password_validation.CommonPasswordValidator",
-    },
-    {
-        "NAME": "django.contrib.auth.password_validation.NumericPasswordValidator",
-    },
+    # {
+    #     "NAME": "django.contrib.auth.password_validation.MinimumLengthValidator",
+    # },
+    # {
+    #     "NAME": "django.contrib.auth.password_validation.CommonPasswordValidator",
+    # },
+    # {
+    #     "NAME": "django.contrib.auth.password_validation.NumericPasswordValidator",
+    # },
 ]
 
 

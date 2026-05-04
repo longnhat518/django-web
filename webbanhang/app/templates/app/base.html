@@ -33,9 +33,23 @@
           <ul class="navbar-nav me-auto ms-3">
             <li class="nav-item dropdown">
               <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">Sản phẩm</a>
-              <ul class="dropdown-menu">
+              <ul class="dropdown-menu border-0 shadow" style="min-width: 220px; border-radius: 8px;">
                 {% for category in categories %}
-                <li><a class="dropdown-item" href="{% url 'category' %}?category={{category.slug}}">{{category.name}}</a></li>
+                  {% if category.sub_categories.all %}
+                  <li class="dropdown-submenu position-relative">
+                    <a class="dropdown-item d-flex justify-content-between align-items-center py-2" href="{% url 'category' %}?category={{category.slug}}">
+                      {{category.name}} <i class="fas fa-chevron-right text-muted" style="font-size: 10px;"></i>
+                    </a>
+                    <ul class="dropdown-menu border-0 shadow position-absolute" style="top: 0; left: 100%; min-width: 220px; border-radius: 8px; margin-top: -8px; display: none;">
+                      <li><a class="dropdown-item fw-bold py-2 border-bottom" href="{% url 'category' %}?category={{category.slug}}">Tất cả {{category.name}}</a></li>
+                      {% for sub in category.sub_categories.all %}
+                      <li><a class="dropdown-item py-2" href="{% url 'category' %}?category={{sub.slug}}">{{sub.name}}</a></li>
+                      {% endfor %}
+                    </ul>
+                  </li>
+                  {% else %}
+                  <li><a class="dropdown-item py-2" href="{% url 'category' %}?category={{category.slug}}">{{category.name}}</a></li>
+                  {% endif %}
                 {% endfor %}
               </ul>
             </li>
@@ -100,7 +114,7 @@
                 <span class="text-muted text-decoration-line-through" style="font-size: 11px;">{{item.product.format_old_price}}</span>
                 {% endif %}
               </div>
-              <button class="btn btn-sm btn-light p-0 border d-flex align-items-center justify-content-center fw-bold" style="width: 20px; height: 20px; background: #eee; font-size: 12px; line-height: 12px;">
+              <button class="btn btn-sm btn-light p-0 border d-flex align-items-center justify-content-center fw-bold update-cart" data-product="{{item.product.id}}" data-action="delete" style="width: 20px; height: 20px; background: #eee; font-size: 12px; line-height: 12px;">
                 &times;
               </button>
             </div>

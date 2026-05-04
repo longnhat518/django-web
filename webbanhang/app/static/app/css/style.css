@@ -109,3 +109,15 @@ body {
   max-height: 400px;
   overflow-y: scroll;
 }
+
+/* Multi-level Dropdown Menu */
+.dropdown-submenu:hover > .dropdown-menu {
+  display: block !important;
+}
+.dropdown-menu .dropdown-item:hover {
+  background-color: #f8f9fa;
+  color: #f26522;
+}
+.dropdown-menu {
+  transition: all 0.3s ease;
+}

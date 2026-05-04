@@ -54,6 +54,11 @@ function addCookieItem(productId, action){
         }
     }
 
+    if (action == 'delete') {
+        console.log('Item deleted completely');
+        delete cart[productId];
+    }
+
     console.log('CART:', cart);
     
     // Tự cài đặt thời gian sống của cookie (ví dụ: 30 ngày)
