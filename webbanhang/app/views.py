@@ -176,3 +176,26 @@ def detail(request, slug):
         'customer': customer
     }
     return render(request, "app/detail.html", context)
+
+def all_product(request):
+    customer = None
+    if request.user.is_authenticated:
+        customer = request.user
+        order, created = Order.objects.get_or_create(customer=customer, complete=False)
+        items = order.orderitem_set.all()
+    else:
+        cookieData = cookieCart(request)
+        items = cookieData['items']
+        order = cookieData['order']
+    
+    product = Product.objects.all()
+    categories = Category.objects.filter(is_sub=False)
+    
+    context = {
+        'products': product,
+        'categories': categories,
+        'items': items,
+        'order': order,
+        'customer': customer
+    }
+    return render(request, "app/all_product.html", context)

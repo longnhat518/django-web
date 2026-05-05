@@ -1,12 +1,12 @@
 {% extends 'app/base.html' %}
 {% load static %}
-{% block main-content %}
+{% block detail %}
 <div class="container py-4" style="margin-top: 10px;">
     <!-- Breadcrumb -->
     <nav aria-label="breadcrumb">
         <ol class="breadcrumb" style="font-size: 13px;">
             <li class="breadcrumb-item"><a href="{% url 'home' %}" class="text-decoration-none text-muted">Trang chủ</a></li>
-            <li class="breadcrumb-item"><a href="#" class="text-decoration-none text-muted">Tất cả sản phẩm</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'all_product' %}" class="text-decoration-none text-muted">Tất cả sản phẩm</a></li>
             <li class="breadcrumb-item active" aria-current="page">{{ product.name }}</li>
         </ol>
     </nav>
@@ -28,10 +28,6 @@
                     <img src="{% static 'app/images/placeholder.png' %}" class="img-fluid border active-thumbnail" style="cursor: pointer; object-fit: cover; aspect-ratio: 1;">
                     {% endfor %}
                     <!-- Placeholder for video if exists -->
-                    <div class="border d-flex align-items-center justify-content-center text-center flex-column" style="cursor: pointer; aspect-ratio: 1; font-size: 10px; background: #f8f9fa;">
-                        <i class="fas fa-play mb-1"></i>
-                        XEM VIDEO
-                    </div>
                 </div>
                 <!-- Main Image -->
                 <div class="col-10">
@@ -212,4 +208,4 @@
         location.reload();
     }
 </script>
-{% endblock main-content %}
+{% endblock detail %}

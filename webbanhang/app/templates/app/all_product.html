@@ -1,13 +1,17 @@
-{% extends 'app/base.html' %} 
-{% load static%} 
-{%block category%}
-<section class="py-5 bg-light">
-  <div class="container">
-    <div class="d-flex justify-content-between mb-4">
-      <a href="{% url 'all_product' %}">Xem thêm</a>
-    </div>
-
-    <div class="row g-4">
+{% extends 'app/base.html' %}
+{% load static %}
+{% block all_product %}
+        <!-- Breadcrumb -->
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb" style="font-size: 13px;">
+            <li class="breadcrumb-item"><a href="{% url 'home' %}" class="text-decoration-none text-muted">Trang chủ</a></li>
+            <li class="breadcrumb-item"><a href="#" class="text-decoration-none text-muted">Tất cả sản phẩm</a></li>
+        </ol>
+    </nav>
+    <hr class="mb-4">
+    <section class="py-5 bg-light">
+      <div class="container">
+        <div class="row g-4">
       {% for product in products %}
       <div class="col-md-3">
         <div class="card product-card position-relative">
@@ -20,8 +24,8 @@
           </div>
           <div class="card-body d-flex flex-column">
             <h6>
-              <a style="text-decoration: none; color: #000;" href="{% if product.slug %}{% url 'detail' product.slug %}{% else %}#{% endif %}">
-              {{ product.short_name}}</a></h6>
+                <a style="text-decoration: none; color: #000;" href="{% if product.slug %}{% url 'detail' product.slug %}{% else %}#{% endif %}">
+                {{ product.short_name}}</a></h6>
             <div>
               <span class="text-danger fw-bold"
                 >{{ product.format_price}}</span
@@ -71,4 +75,4 @@
     </div>
   </div>
 </section>
-{%endblock category%}
+{% endblock all_product %}
