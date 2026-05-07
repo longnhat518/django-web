@@ -86,54 +86,56 @@
           {% else %}
           <a href="{% url 'login' %}" class="me-3" style="color: inherit; text-decoration: none;">Đăng nhập</a>
           {% endif %}
-          <a href="#" id="cartBtn" class="text-decoration-none position-relative ms-1" style="color: inherit;">
-            <i class="fas fa-shopping-cart fs-5"></i>
-            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="font-size: 0.6rem; padding: 0.25em 0.4em;">
-              {{ order.get_cart_items|default:"0" }}
-            </span>
-          </a>
-        </div>
-      </div>
-    </nav>
-    <div id="cartDropdown" class="cart-dropdown p-3">
-      <div class="fw-bold text-secondary mb-2 text-uppercase" style="font-size: 16px;">GIỎ HÀNG</div>
-      <hr class="text-muted my-2">
-      <div class="cart-items">
-        {% for item in items%}
-        <div class="cart-item-mini d-flex align-items-start py-3 border-bottom">
-          <img src="{{item.product.imageURL}}" class="border" style="width: 80px; height: 80px; object-fit: cover;">
-          <div class="flex-grow-1 ms-3">
-            <div class="fw-bold text-uppercase" style="font-size: 12px; color: #4a4a4a; line-height: 1.4;">{{item.product.name}}</div>
-            <div class="text-uppercase text-muted" style="font-size: 11px; margin-top: 6px;">{{item.product.category_names|default:""}}</div>
-            
-            <div class="d-flex justify-content-between align-items-center mt-2">
-              <div class="d-flex align-items-center">
-                <div class="bg-light text-center me-2 text-secondary" style="width: 25px; height: 25px; line-height: 25px; font-size: 12px;">{{item.quantity}}</div>
-                <span class="fw-bold me-2" style="font-size: 13px; color: #333;">{{item.product.format_price}}</span>
-                {% if item.product.old_price %}
-                <span class="text-muted text-decoration-line-through" style="font-size: 11px;">{{item.product.format_old_price}}</span>
-                {% endif %}
+          <div class="cart-wrapper ms-1 py-2">
+            <a href="{% url 'cart' %}" id="cartBtn" class="text-decoration-none position-relative d-inline-block" style="color: inherit;">
+              <i class="fas fa-shopping-cart fs-5"></i>
+              <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="font-size: 0.6rem; padding: 0.25em 0.4em;">
+                {{ order.get_cart_items|default:"0" }}
+              </span>
+            </a>
+            <div id="cartDropdown" class="cart-dropdown p-3">
+              <div class="fw-bold text-secondary mb-2 text-uppercase" style="font-size: 16px;">GIỎ HÀNG</div>
+              <hr class="text-muted my-2">
+              <div class="cart-items">
+                {% for item in items%}
+                <div class="cart-item-mini d-flex align-items-start py-3 border-bottom">
+                  <img src="{{item.product.imageURL}}" class="border" style="width: 80px; height: 80px; object-fit: cover;">
+                  <div class="flex-grow-1 ms-3">
+                    <div class="fw-bold text-uppercase" style="font-size: 12px; color: #4a4a4a; line-height: 1.4;">{{item.product.name}}</div>
+                    <div class="text-uppercase text-muted" style="font-size: 11px; margin-top: 6px;">{{item.product.category_names|default:""}}</div>
+                    
+                    <div class="d-flex justify-content-between align-items-center mt-2">
+                      <div class="d-flex align-items-center">
+                        <div class="bg-light text-center me-2 text-secondary" style="width: 25px; height: 25px; line-height: 25px; font-size: 12px;">{{item.quantity}}</div>
+                        <span class="fw-bold me-2" style="font-size: 13px; color: #333;">{{item.product.format_price}}</span>
+                        {% if item.product.old_price %}
+                        <span class="text-muted text-decoration-line-through" style="font-size: 11px;">{{item.product.format_old_price}}</span>
+                        {% endif %}
+                      </div>
+                      <button class="btn btn-sm btn-light p-0 border d-flex align-items-center justify-content-center fw-bold update-cart" data-product="{{item.product.id}}" data-action="delete" style="width: 20px; height: 20px; background: #eee; font-size: 12px; line-height: 12px;">
+                        &times;
+                      </button>
+                    </div>
+                  </div>
+                </div>
+                {%endfor%}
               </div>
-              <button class="btn btn-sm btn-light p-0 border d-flex align-items-center justify-content-center fw-bold update-cart" data-product="{{item.product.id}}" data-action="delete" style="width: 20px; height: 20px; background: #eee; font-size: 12px; line-height: 12px;">
-                &times;
-              </button>
+
+              <div class="cart-footer mt-2 p-0 pt-2">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                  <span class="text-secondary text-uppercase" style="font-size: 13px;">Tổng tiền:</span>
+                  <strong style="color: #e65540; font-size: 18px;">{{order.format_get_cart_total}}</strong>
+                </div>
+                <div class="d-flex gap-2">
+                  <button class="btn btn-secondary w-50" style="font-size: 13px; border-radius: 4px;"> <a class="text-decoration-none text-white" href="{% url 'cart' %}">XEM GIỎ HÀNG</a></button>
+                  <button class="btn btn-danger w-50" style="font-size: 13px; border-radius: 4px; background-color: #e65540; border-color: #e65540;"> <a class="text-decoration-none text-white" href="{% url 'checkout' %}">THANH TOÁN</a></button>
+                </div>
+              </div>
             </div>
           </div>
         </div>
-        {%endfor%}
       </div>
-
-      <div class="cart-footer mt-2 p-0 pt-2">
-        <div class="d-flex justify-content-between align-items-center mb-3">
-          <span class="text-secondary text-uppercase" style="font-size: 13px;">Tổng tiền:</span>
-          <strong style="color: #e65540; font-size: 18px;">{{order.format_get_cart_total}}</strong>
-        </div>
-        <div class="d-flex gap-2">
-          <button class="btn btn-secondary w-50" style="font-size: 13px; border-radius: 4px;"> <a class="text-decoration-none text-white" href="{% url 'cart' %}">XEM GIỎ HÀNG</a></button>
-          <button class="btn btn-danger w-50" style="font-size: 13px; border-radius: 4px; background-color: #e65540; border-color: #e65540;"> <a class="text-decoration-none text-white" href="{% url 'checkout' %}">THANH TOÁN</a></button>
-        </div>
-      </div>
-    </div>
+    </nav>
     <!-- END header -->
     <!-- Main -->
     {%block banner-slide %}{%endblock banner-slide%} 
@@ -146,10 +148,130 @@
     {% block detail %}{% endblock detail %}
     {% block all_product %} {% endblock all_product %}
     <!-- End Main -->
-    <footer style="color: white;" 
-      class="container--fluid bg-black text-center fixed-bottom p-2 mt-5"
-    >
-      Copy right 2026
+    <footer class="mt-5 border-top" style="background-color: #f9f9f9;">
+      <!-- Features Section -->
+      <div class="bg-white">
+        <div class="container py-4 border-bottom">
+          <div class="row text-center g-0">
+            <div class="col-md-3 py-3 feature-col">
+              <i class="fas fa-shopping-cart mb-3" style="font-size: 28px; color: #333;"></i>
+              <h6 class="fw-bold mb-1" style="font-size: 15px; color: #333;">Giao Hàng & Lắp Đặt</h6>
+              <p class="text-muted mb-0" style="font-size: 13px;">Miễn Phí</p>
+            </div>
+            <div class="col-md-3 py-3 feature-col">
+              <i class="fas fa-sync mb-3" style="font-size: 28px; color: #333;"></i>
+              <h6 class="fw-bold mb-1" style="font-size: 15px; color: #333;">Đổi Trả 1 - 1</h6>
+              <p class="text-muted mb-0" style="font-size: 13px;">Miễn Phí</p>
+            </div>
+            <div class="col-md-3 py-3 feature-col">
+              <i class="fas fa-shield-alt mb-3" style="font-size: 28px; color: #333;"></i>
+              <h6 class="fw-bold mb-1" style="font-size: 15px; color: #333;">Bảo Hành Đến 5 Năm</h6>
+              <p class="text-muted mb-0" style="font-size: 13px;">Miễn Phí</p>
+            </div>
+            <div class="col-md-3 py-3 feature-col">
+              <i class="fas fa-headset mb-3" style="font-size: 28px; color: #333;"></i>
+              <h6 class="fw-bold mb-1" style="font-size: 15px; color: #333;">Tư Vấn Thiết Kế</h6>
+              <p class="text-muted mb-0" style="font-size: 13px;">Miễn Phí</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Main Footer Content -->
+      <div class="container py-5">
+        <div class="row">
+          <!-- Column 1 -->
+          <div class="col-lg-3 col-md-6 mb-4 mb-lg-0">
+            <h6 class="footer-title">NỘI THẤT MOHO</h6>
+            <p class="footer-text">
+              Nội Thất MOHO là thương hiệu đến từ Savimex với gần 40 năm kinh nghiệm trong việc sản xuất và xuất khẩu nội thất đạt chuẩn quốc tế.
+            </p>
+            <div class="d-flex gap-2 mt-3">
+              <img src="https://theme.hstatic.net/200000065946/1001264503/14/logo-bct.png?v=362" alt="BCT" width="120" style="object-fit: contain;">
+              <img src="https://images.dmca.com/Badges/dmca_protected_sml_120n.png?ID=e75fb04b-325b-4395-8120-e2ef6e9b41dc" alt="DMCA" width="100" style="object-fit: contain;">
+            </div>
+          </div>
+
+          <!-- Column 2 -->
+          <div class="col-lg-3 col-md-6 mb-4 mb-lg-0">
+            <h6 class="footer-title">THÔNG TIN</h6>
+            <ul class="list-unstyled mb-0">
+              <li><a href="#" class="footer-link">Chính Sách Bán Hàng</a></li>
+              <li><a href="#" class="footer-link">Chính Sách Giao Hàng & Lắp Đặt</a></li>
+              <li><a href="#" class="footer-link">Chính Sách Bảo Hành & Bảo Trì</a></li>
+              <li><a href="#" class="footer-link">Chính Sách Đổi Trả</a></li>
+              <li><a href="#" class="footer-link">Khách Hàng Thân Thiết – MOHOmie</a></li>
+              <li><a href="#" class="footer-link">Chính Sách Đối Tác Bán Hàng</a></li>
+            </ul>
+          </div>
+
+          <!-- Column 3 -->
+          <div class="col-lg-3 col-md-6 mb-4 mb-lg-0">
+            <h6 class="footer-title">THÔNG TIN LIÊN HỆ</h6>
+            <ul class="list-unstyled mb-0">
+              <li class="mb-3 d-flex footer-text">
+                <i class="fas fa-map-marker-alt mt-1 me-2" style="width: 16px;"></i>
+                <div>
+                  <strong style="color: #333;">[Trụ sở chính]</strong><br>
+                  162 HT17, P. Hiệp Thành, Q. 12, TP. HCM (Nằm trong khuôn viên công ty SAVIMEX phía sau bến xe buýt Hiệp Thành)<br>
+                  Hotline: 0971141140
+                </div>
+              </li>
+              <li class="mb-3 d-flex footer-text">
+                <i class="fas fa-phone-alt mt-1 me-2" style="width: 16px;"></i>
+                <div>
+                  097 114 1140 (Hotline/Zalo)<br>
+                  0902 415 359 (Đội Giao Hàng)
+                </div>
+              </li>
+              <li class="mb-3 d-flex footer-text">
+                <i class="fas fa-envelope mt-1 me-2" style="width: 16px;"></i>
+                <div>
+                  cskh@moho.com.vn<br>
+                  Công Ty Cổ Phần Hợp Tác Kinh Tế Và Xuất Nhập Khẩu Savimex -<br>
+                  STK: 0071001303667 - Vietcombank CN HCM
+                </div>
+              </li>
+            </ul>
+          </div>
+
+          <!-- Column 4 -->
+          <div class="col-lg-3 col-md-6 mb-4 mb-lg-0">
+            <h6 class="footer-title">FANPAGE</h6>
+            {% comment %} <div class="card border border-light shadow-sm" style="overflow: hidden; border-radius: 8px;">
+              <img src="https://theme.hstatic.net/200000065946/1001264503/14/fanpage_bg.jpg?v=362" class="card-img-top" alt="fanpage bg" style="height: 90px; object-fit: cover; filter: brightness(0.85);">
+              <div class="card-body position-relative pt-0 bg-white" style="padding: 12px;">
+                <div class="d-flex align-items-end" style="margin-top: -24px; margin-bottom: 8px;">
+                  <img src="https://theme.hstatic.net/200000065946/1001264503/14/logo.png?v=362" class="rounded-circle border border-2 border-white shadow-sm" alt="logo" width="48" height="48" style="background: white;">
+                  <div class="ms-2 mb-1">
+                    <h6 class="mb-0 fw-bold" style="font-size: 13px; color: #1c1e21;">Nội Thất MOHO</h6>
+                    <small class="text-muted" style="font-size: 11px;">104K followers</small>
+                  </div>
+                </div>
+                <p class="text-muted mb-2" style="font-size: 11px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">
+                  MOHO - Nội Thất An Toàn Cho Sức Khỏe Thiết Kế - Thi Công Nội Thất Theo Yêu Cầu...
+                </p>
+                <a href="#" class="btn btn-sm w-100 fw-bold text-white d-flex align-items-center justify-content-center" style="font-size: 12px; background-color: #1877f2; border-radius: 4px;">
+                  <i class="fab fa-facebook-f me-2"></i> Follow
+                </a>
+              </div>
+            </div> {% endcomment %}
+          </div>
+        </div>
+      </div>
+
+      <!-- Bottom Section -->
+      <div class="py-4 text-center">
+        <div class="container">
+          <div class="mb-3 d-flex justify-content-center gap-3">
+            <a href="#" class="social-icon" style="background-color: #3b5998;"><i class="fab fa-facebook-f"></i></a>
+            <a href="#" class="social-icon" style="background-color: #ff0000;"><i class="fab fa-youtube"></i></a>
+            <a href="#" class="social-icon" style="background: radial-gradient(circle at 30% 107%, #fdf497 0%, #fdf497 5%, #fd5949 45%, #d6249f 60%, #285AEB 90%);"><i class="fab fa-instagram"></i></a>
+            <a href="#" class="social-icon" style="background-color: #000000;"><i class="fab fa-tiktok"></i></a>
+          </div>
+          <p class="text-muted mb-0" style="font-size: 13px;">Chỉ đường đến showroom trên Google Maps</p>
+        </div>
+      </div>
     </footer>
     <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
     <script>

@@ -1,6 +1,7 @@
 {% extends 'app/base.html' %}
 {% load static %}
 {% block all_product %}
+<div class="container py-4" style="margin-top: 10px;">
         <!-- Breadcrumb -->
     <nav aria-label="breadcrumb">
         <ol class="breadcrumb" style="font-size: 13px;">
@@ -9,7 +10,7 @@
         </ol>
     </nav>
     <hr class="mb-4">
-    <section class="py-5 bg-light">
+    <section class="py-5">
       <div class="container">
         <div class="row g-4">
       {% for product in products %}
@@ -75,4 +76,5 @@
     </div>
   </div>
 </section>
+</div>
 {% endblock all_product %}

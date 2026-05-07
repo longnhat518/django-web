@@ -213,20 +213,20 @@ function applyCoupon(){
 
 render();
 
-const cartBtn = document.getElementById("cartBtn");
-const cartDropdown = document.getElementById('cartDropdown');
+// const cartBtn = document.getElementById("cartBtn");
+// const cartDropdown = document.getElementById('cartDropdown');
  
-if (cartBtn && cartDropdown) {
-  cartBtn.addEventListener('click', (e) => {
-    console.log('cartBtn clicked');
-    e.preventDefault();
-    cartDropdown.classList.toggle('active');
-  });
+// if (cartBtn && cartDropdown) {
+//   cartBtn.addEventListener('click', (e) => {
+//     // console.log('cartBtn clicked');
+//     // e.preventDefault();
+//     // cartDropdown.classList.toggle('active');
+//   });
 
-  // click outside to close
-  window.addEventListener('click', (e) => {
-    if (!cartDropdown.contains(e.target) && !cartBtn.contains(e.target)) {
-      cartDropdown.classList.remove('active');
-    }
-  });
-}
+//   // click outside to close
+//   window.addEventListener('click', (e) => {
+//     if (!cartDropdown.contains(e.target) && !cartBtn.contains(e.target)) {
+//       cartDropdown.classList.remove('active');
+//     }
+//   });
+// }

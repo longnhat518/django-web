@@ -1,5 +1,5 @@
 body {
-  font-family: 'Montserrat', sans-serif;
+  font-family: "Montserrat", sans-serif;
 }
 .navbar-brand {
   font-weight: bold;
@@ -86,31 +86,48 @@ body {
 }
 .cart-dropdown {
   position: absolute;
-  right: 15%;
-  top: 60px;
+  right: 0;
+  top: 100%;
   width: 400px;
   background: #fff;
   border-radius: 8px;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
   display: none;
   z-index: 999;
 }
-.cart-dropdown.active { display: block; }
+.cart-wrapper:hover .cart-dropdown {
+  display: block;
+}
+.cart-dropdown.active {
+  display: block;
+}
 .cart-item-mini {
   display: flex;
   gap: 10px;
   padding: 10px;
   border-bottom: 1px solid #eee;
 }
-.cart-item-mini img { width: 60px; height: 60px; object-fit: cover; }
-.cart-footer { padding: 10px; }
+.cart-item-mini img {
+  width: 60px;
+  height: 60px;
+  object-fit: cover;
+}
+.cart-footer {
+  padding: 10px;
+}
 
-.cart-items{
+.cart-items {
   max-height: 400px;
   overflow-y: scroll;
 }
 
 /* Multi-level Dropdown Menu */
+@media all and (min-width: 992px) {
+  .dropdown:hover > .dropdown-menu {
+    display: block !important;
+    margin-top: 0;
+  }
+}
 .dropdown-submenu:hover > .dropdown-menu {
   display: block !important;
 }
@@ -120,4 +137,59 @@ body {
 }
 .dropdown-menu {
   transition: all 0.3s ease;
+}
+
+/*Footer  */
+.feature-col {
+  border-right: 1px solid #eaeaea;
+}
+.feature-col:last-child {
+  border-right: none;
+}
+@media (max-width: 767px) {
+  .feature-col {
+    border-right: none;
+    border-bottom: 1px solid #eaeaea;
+  }
+  .feature-col:last-child {
+    border-bottom: none;
+  }
+}
+.footer-title {
+  font-size: 14px;
+  font-weight: 700;
+  margin-bottom: 20px;
+  color: #333;
+}
+.footer-link {
+  color: #666;
+  text-decoration: none;
+  font-size: 13px;
+  display: block;
+  margin-bottom: 12px;
+  transition: color 0.3s;
+}
+.footer-link:hover {
+  color: #e65540;
+}
+.footer-text {
+  color: #666;
+  font-size: 13px;
+  line-height: 1.6;
+}
+.social-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  text-decoration: none;
+  font-size: 16px;
+  transition: opacity 0.3s;
+}
+.social-icon:hover {
+  opacity: 0.8;
+  color: white;
 }
