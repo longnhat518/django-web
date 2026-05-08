@@ -5,6 +5,7 @@ from django.contrib.auth.models import User
 from django.db.models.signals import post_delete
 from django.dispatch import receiver
 from django.utils.text import slugify
+from tinymce.models import HTMLField
 # Create your models here.
 
 def image_upload_path(instance, filename):
@@ -38,7 +39,7 @@ class Product(models.Model):
     quantity = models.IntegerField(default=0, null=True, blank=True, verbose_name="Số lượng")
     slug = models.SlugField(max_length=200, unique=True, null=True, blank=True, verbose_name="Đường dẫn (Slug)")
     sku = models.CharField(max_length=50, null=True, blank=True, verbose_name="Mã SKU")
-    description = models.TextField(null=True, blank=True, verbose_name="Mô tả sản phẩm")
+    description = HTMLField(null=True, blank=True, verbose_name="Mô tả sản phẩm")
     size_info = models.TextField(null=True, blank=True, verbose_name="Thông tin kích thước")
     material_info = models.TextField(null=True, blank=True, verbose_name="Thông tin chất liệu")
 

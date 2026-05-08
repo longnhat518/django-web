@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "app",
+    "tinymce",
     "django_cleanup.apps.CleanupConfig",  # should be placed after your apps
 ]
 

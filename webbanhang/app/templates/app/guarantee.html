@@ -1,0 +1,201 @@
+{% extends 'app/base.html' %} {% load static %} {% block title %}Chính sách bảo
+hành{% endblock %} {% block guarantee %}
+<style>
+  .policy-container {
+    background-color: #fff;
+    padding: 40px;
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    border-top: 8px solid #8b4513;
+  }
+  .policy-container h1 {
+    color: #8b4513;
+    text-align: center;
+    text-transform: uppercase;
+    margin-bottom: 30px;
+    border-bottom: 2px solid #eee;
+    padding-bottom: 15px;
+  }
+  .policy-container h2 {
+    color: #5d2e0a;
+    border-left: 5px solid #8b4513;
+    padding-left: 15px;
+    margin-top: 25px;
+    font-size: 1.3em;
+  }
+  .policy-container p {
+    margin-bottom: 15px;
+    text-align: justify;
+  }
+  .policy-container ul {
+    margin-bottom: 20px;
+  }
+  .policy-container li {
+    margin-bottom: 8px;
+  }
+  .policy-container strong {
+    color: #8b4513;
+  }
+  .policy-container .highlight-box {
+    background-color: #fff8f0;
+    border: 1px dashed #8b4513;
+    padding: 20px;
+    margin: 25px 0;
+    font-style: italic;
+    text-align: center;
+    border-radius: 5px;
+  }
+  .policy-container .footer-note {
+    font-size: 0.9em;
+    color: #777;
+    text-align: center;
+    margin-top: 30px;
+    border-top: 1px solid #eee;
+    padding-top: 20px;
+  }
+</style>
+<div class="container py-4" style="margin-top: 10px">
+  <!-- Breadcrumb -->
+  <nav aria-label="breadcrumb">
+    <ol class="breadcrumb" style="font-size: 13px">
+      <li class="breadcrumb-item">
+        <a href="{% url 'home' %}" class="text-decoration-none text-muted"
+          >Trang chủ</a
+        >
+      </li>
+      <li class="breadcrumb-item">
+        <a href="#" class="text-decoration-none text-muted"
+          >Chính sách bảo hành</a
+        >
+      </li>
+    </ol>
+  </nav>
+  <hr class="mb-4" />
+  <section class="py-5">
+    <div class="container">
+      <div class="row g-4">
+        <div class="policy-container">
+          <h1>Chính Sách Bán Hàng & Cam Kết Dịch Vụ</h1>
+
+          <p>
+            Tại <strong>[Tên Doanh Nghiệp]</strong>, mỗi bộ bàn ghế không chỉ là
+            vật dụng nội thất mà còn là một tác phẩm nghệ thuật, kết tinh từ tâm
+            huyết của những người thợ lành nghề. Nhằm đảm bảo quyền lợi cao nhất
+            cho Quý khách hàng, chúng tôi thiết lập Chính sách bán hàng dựa trên
+            5 trụ cột cốt lõi:
+          </p>
+
+          <h2>1. Cam Kết Chất Lượng Sản Phẩm</h2>
+          <p>
+            Chúng tôi hiểu rằng chất liệu gỗ là linh hồn của sản phẩm.
+            <strong>[Tên Doanh Nghiệp]</strong> cam kết:
+          </p>
+          <ul>
+            <li>
+              <strong>Đúng chủng loại:</strong> Đảm bảo 100% đúng loại gỗ theo
+              hợp đồng. Tuyệt đối không pha tạp các loại gỗ kém chất lượng hoặc
+              dùng gỗ rác vào các chi tiết khuất.
+            </li>
+            <li>
+              <strong>Quy trình xử lý:</strong> Toàn bộ nguyên liệu đầu vào đều
+              qua công đoạn tẩm sấy đạt độ ẩm tiêu chuẩn từ 12% - 15%, giúp sản
+              phẩm thích ứng tốt với mọi điều kiện thời tiết, hạn chế tối đa
+              hiện tượng co ngót, nứt xé hay cong vênh.
+            </li>
+            <li>
+              <strong>Độ hoàn thiện:</strong> Sử dụng các dòng sơn cao cấp (như
+              Inchem, PU 7 thành phần) đảm bảo bề mặt mịn màng, giữ nguyên vẻ
+              đẹp của vân gỗ tự nhiên và an toàn cho sức khỏe người sử dụng.
+            </li>
+          </ul>
+
+          <h2>2. Quy Trình Mua Sắm Minh Bạch</h2>
+          <p>
+            Để khách hàng hoàn toàn yên tâm về "thực chất" bên trong, chúng tôi
+            áp dụng quy trình kiểm định trực tiếp:
+          </p>
+          <ul>
+            <li>
+              <strong>Kiểm tra mộc:</strong> Khuyến khích khách hàng đến tận
+              xưởng hoặc nhận hình ảnh/video kiểm tra phần gỗ thô (mộc) trước
+              khi phun sơn. Đây là lời khẳng định về sự trung thực trong chất
+              liệu của chúng tôi.
+            </li>
+            <li>
+              <strong>Cá nhân hóa:</strong> Hỗ trợ điều chỉnh kích thước, màu
+              sắc và kiểu dáng theo diện tích thực tế của không gian sống nhà
+              bạn.
+            </li>
+          </ul>
+
+          <h2>3. Chính Sách Vận Chuyển & Lắp Đặt</h2>
+          <ul>
+            <li>
+              <strong>Phạm vi:</strong> Miễn phí vận chuyển và lắp đặt trong khu
+              vực nội thành [Tên Thành phố]. Đối với các tỉnh thành khác, chúng
+              tôi hỗ trợ chi phí vận chuyển tối đa thông qua các đối tác
+              logistics uy tín.
+            </li>
+            <li>
+              <strong>Kỹ thuật lắp đặt:</strong> Đội ngũ thợ lắp đặt có tay nghề
+              cao sẽ trực tiếp thi công, đảm bảo sản phẩm được cân chỉnh chính
+              xác, chắc chắn và không gây trầy xước sàn nhà hay tường của gia
+              chủ.
+            </li>
+          </ul>
+
+          <h2>4. Chế Độ Bảo Hành & Bảo Trì Hậu Mãi</h2>
+          <p>
+            Sự đồng hành của chúng tôi không dừng lại sau khi bàn giao sản phẩm:
+          </p>
+          <ul>
+            <li>
+              <strong>Bảo hành kết cấu:</strong> Thời gian bảo hành từ 5 đến 15
+              năm (tùy dòng gỗ) cho các lỗi liên quan đến kỹ thuật sản xuất như
+              nứt vỡ tự nhiên, hỏng mộng, sập xệ.
+            </li>
+            <li>
+              <strong>Bảo trì trọn đời:</strong> Cung cấp dịch vụ làm mới, đánh
+              bóng, sơn lại sản phẩm sau nhiều năm sử dụng với mức phí hỗ trợ kỹ
+              thuật (không tính lãi).
+            </li>
+            <li>
+              <strong>Phản hồi nhanh chóng:</strong> Cam kết tiếp nhận và xử lý
+              mọi khiếu nại của khách hàng trong vòng 24h - 48h làm việc.
+            </li>
+          </ul>
+
+          <h2>5. Chính Sách Đổi Trả & Hoàn Tiền</h2>
+          <p>Chúng tôi bảo vệ quyền lợi của bạn trong các trường hợp:</p>
+          <ul>
+            <li>
+              Sản phẩm bàn giao không đúng mẫu mã, kích thước hoặc chủng loại gỗ
+              như thỏa thuận ban đầu.
+            </li>
+            <li>
+              Phát hiện sai phạm về chất lượng gỗ (pha tạp gỗ rác) –
+              <strong>[Tên Doanh Nghiệp]</strong> cam kết bồi thường [Số %] giá
+              trị đơn hàng.
+            </li>
+            <li>
+              Hỗ trợ đổi mẫu trong vòng 7 ngày nếu khách hàng cảm thấy không phù
+              hợp với không gian (với điều kiện sản phẩm còn nguyên trạng).
+            </li>
+          </ul>
+
+          <div class="highlight-box">
+            "Uy tín là gỗ, Niềm tin là vàng"<br />
+            Chúng tôi tin rằng bằng sự chân thành trong kinh doanh và tinh xảo
+            trong chế tác, <strong>[Tên Doanh Nghiệp]</strong> sẽ mang lại sự
+            sang trọng và ấm cúng nhất cho tổ ấm của Quý khách.
+          </div>
+
+          <div class="footer-note">
+            <p>© 2024 [Tên Doanh Nghiệp] - Tinh Hoa Đồ Gỗ Việt</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+{% endblock guarantee %}

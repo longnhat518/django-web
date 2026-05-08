@@ -14,19 +14,19 @@ class ProductImageInline(admin.TabularInline):
 
 class ProductAdmin(admin.ModelAdmin):
     inlines = [ProductImageInline]
-    list_display = ('name', 'price', 'old_price', 'is_featured', 'is_on_sale', 'digital', 'sold_count', 'quantity')
+    list_display = ('id','name', 'price', 'old_price', 'is_featured', 'is_on_sale', 'digital', 'sold_count', 'quantity')
     list_filter = ('is_featured', 'is_on_sale', 'digital')
     search_fields = ('name',)
     list_editable = ('is_featured', 'is_on_sale', 'digital', 'sold_count', 'quantity')
 
 class OrderAdmin(admin.ModelAdmin):
-    list_display = ('customer', 'date_ordered', 'complete', 'transaction_id')
+    list_display = ('id','customer', 'date_ordered', 'complete', 'transaction_id')
     list_filter = ('complete', 'date_ordered')
     search_fields = ('customer__username', 'transaction_id')
     list_editable = ('complete',)
 
 class OrderItemAdmin(admin.ModelAdmin):
-    list_display = ('product', 'order', 'quantity', 'date_added')
+    list_display = ('id','product', 'order', 'quantity', 'date_added')
     list_filter = ('date_added',)
     search_fields = ('product__name', 'order__customer__username')
     list_editable = ('quantity',)

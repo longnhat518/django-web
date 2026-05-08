@@ -49,7 +49,8 @@ def cart(request):
         cookieData = cookieCart(request)
         items = cookieData['items']
         order = cookieData['order']
-    context = {'items': items, 'order': order, 'customer': customer}
+    categories = Category.objects.filter(is_sub=False)
+    context = {'items': items, 'order': order, 'customer': customer, 'categories': categories}
     return render(request, "app/cart.html", context)
 
 def checkout(request):
@@ -62,7 +63,8 @@ def checkout(request):
         cookieData = cookieCart(request)
         items = cookieData['items']
         order = cookieData['order']
-    context = {"items": items, "order": order, "customer": customer}
+    categories = Category.objects.filter(is_sub=False)
+    context = {"items": items, "order": order, "customer": customer, 'categories': categories}
     return render(request, "app/checkout.html", context)
 
 def updateItem(request):
@@ -199,3 +201,25 @@ def all_product(request):
         'customer': customer
     }
     return render(request, "app/all_product.html", context)
+
+def guarantee(request):
+    customer = None
+    if request.user.is_authenticated:
+        customer = request.user
+        order, created = Order.objects.get_or_create(customer=customer, complete=False)
+        items = order.orderitem_set.all()
+    else:
+        cookieData = cookieCart(request)
+        items = cookieData['items']
+        order = cookieData['order']
+    
+    categories = Category.objects.filter(is_sub=False)
+    
+    context = {
+        'items': items,
+        'order': order,
+        'customer': customer,
+        'categories': categories
+    }
+    
+    return render(request, "app/guarantee.html", context)
