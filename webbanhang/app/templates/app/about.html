@@ -1,0 +1,212 @@
+{% extends 'app/base.html' %} {% load static %} {% block title %}Về chúng tôi{% endblock %} {% block about %}
+<style>
+    .about-container {
+        background-color: #fff;
+        padding: 50px;
+        border-radius: 12px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+        border-top: 10px solid #5d2e0a;
+    }
+    .about-container .header-section {
+        text-align: center;
+        margin-bottom: 40px;
+    }
+    .about-container h1 {
+        color: #5d2e0a;
+        font-size: 2.5em;
+        margin-bottom: 10px;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+    }
+    .about-container .subtitle {
+        color: #8b4513;
+        font-style: italic;
+        font-size: 1.1em;
+    }
+    .about-container h2 {
+        color: #8b4513;
+        border-bottom: 2px solid #f0e6dd;
+        padding-bottom: 10px;
+        margin-top: 35px;
+        display: flex;
+        align-items: center;
+    }
+    .about-container h2::before {
+        content: "✦";
+        margin-right: 10px;
+        color: #d4af37;
+    }
+    .about-container p {
+        margin-bottom: 20px;
+        text-align: justify;
+    }
+    .about-container .stats-grid {
+        display: table;
+        width: 100%;
+        margin: 30px 0;
+        background-color: #5d2e0a;
+        color: #fff;
+        border-radius: 8px;
+        padding: 20px 0;
+    }
+    .about-container .stat-item {
+        display: table-cell;
+        text-align: center;
+        width: 33%;
+        border-right: 1px solid #7d4d2b;
+    }
+    .about-container .stat-item:last-child {
+        border-right: none;
+    }
+    .about-container .stat-number {
+        font-size: 1.8em;
+        font-weight: bold;
+        display: block;
+        color: #d4af37;
+    }
+    .about-container .stat-label {
+        font-size: 0.9em;
+        text-transform: uppercase;
+    }
+    .about-container .mission-box {
+        background-color: #fff8f0;
+        border-left: 6px solid #d4af37;
+        padding: 25px;
+        margin: 30px 0;
+    }
+    .about-container .philosophy-list {
+        list-style: none;
+        padding: 0;
+    }
+    .about-container .philosophy-list li {
+        padding-left: 25px;
+        position: relative;
+        margin-bottom: 15px;
+    }
+    .about-container .philosophy-list li::before {
+        content: "✓";
+        position: absolute;
+        left: 0;
+        color: #8b4513;
+        font-weight: bold;
+    }
+    .about-container .footer-about {
+        text-align: center;
+        margin-top: 50px;
+        padding-top: 20px;
+        border-top: 1px solid #eee;
+        font-size: 0.9em;
+        color: #666;
+    }
+    .about-container strong {
+        color: #5d2e0a;
+    }
+</style>
+<div class="container py-4" style="margin-top: 10px">
+    <!-- Breadcrumb -->
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb" style="font-size: 13px">
+            <li class="breadcrumb-item">
+                <a href="{% url 'home' %}" class="text-decoration-none text-muted">Trang chủ</a>
+            </li>
+            <li class="breadcrumb-item">
+                <a href="#" class="text-decoration-none text-muted">Về chúng tôi</a>
+            </li>
+        </ol>
+    </nav>
+    <hr class="mb-4" />
+    <section class="py-5">
+        <div class="container">
+            <div class="row g-4">
+                <div class="about-container">
+                    <div class="header-section">
+                        <h1>Về Chúng Tôi</h1>
+                        <div class="subtitle">Kiến tạo không gian – Gìn giữ giá trị thời gian</div>
+                    </div>
+
+                    <p>
+                        Chào mừng Quý khách đến với <strong>[Tên Doanh Nghiệp]</strong>. Hành trình của chúng tôi bắt
+                        đầu từ niềm đam mê mãnh liệt với vẻ đẹp mộc mạc nhưng sang trọng của gỗ tự nhiên và khát khao
+                        mang nghệ thuật mộc truyền thống vào không gian sống hiện đại.
+                    </p>
+
+                    <h2>Câu Chuyện Thương Hiệu</h2>
+                    <p>
+                        Khởi nguồn từ một xưởng sản xuất nhỏ với những người thợ tâm huyết,
+                        <strong>[Tên Doanh Nghiệp]</strong> đã trải qua hơn [Số năm] năm hình thành và phát triển. Chúng
+                        tôi tin rằng, mỗi thớ gỗ đều có một linh hồn riêng, và nhiệm vụ của người nghệ nhân là đánh thức
+                        linh hồn đó để tạo nên những bộ bàn ghế không chỉ bền bỉ mà còn biết kể chuyện.
+                    </p>
+
+                    <div class="stats-grid">
+                        <div class="stat-item">
+                            <span class="stat-number">[Số năm]+</span>
+                            <span class="stat-label">Kinh nghiệm</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-number">[Số lượng]+</span>
+                            <span class="stat-label">Dự án hoàn thành</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-number">100%</span>
+                            <span class="stat-label">Gỗ tự nhiên</span>
+                        </div>
+                    </div>
+
+                    <h2>Tầm Nhìn & Sứ Mệnh</h2>
+                    <div class="mission-box">
+                        <p>
+                            <strong>Sứ mệnh:</strong> Mang đến cho gia đình Việt những sản phẩm nội thất gỗ chất lượng
+                            cao cấp, tinh xảo trong từng đường nét, góp phần nâng tầm giá trị sống và lưu giữ văn hóa
+                            truyền thống.
+                        </p>
+                        <p>
+                            <strong>Tầm nhìn:</strong> Trở thành đơn vị dẫn đầu trong lĩnh vực sản xuất đồ gỗ mỹ nghệ
+                            tại khu vực, là cái tên bảo chứng cho chất lượng và sự tận tâm.
+                        </p>
+                    </div>
+
+                    <h2>Giá Trị Cốt Lõi</h2>
+                    <ul class="philosophy-list">
+                        <li>
+                            <strong>Chất lượng là gốc:</strong> Chúng tôi không bao giờ thỏa hiệp với những sản phẩm kém
+                            chất lượng. Gỗ sạch, thợ giỏi là tiêu chuẩn tiên quyết.
+                        </li>
+                        <li>
+                            <strong>Sáng tạo không ngừng:</strong> Kết hợp giữa kỹ thuật đục chạm truyền thống và phong
+                            cách thiết kế thời đại để phù hợp với mọi không gian.
+                        </li>
+                        <li>
+                            <strong>Tận tâm phục vụ:</strong> Mỗi khách hàng là một người bạn, mỗi sản phẩm là một lời
+                            cam kết về uy tín của chúng tôi.
+                        </li>
+                        <li>
+                            <strong>Trách nhiệm:</strong> Cam kết sử dụng nguồn gỗ có nguồn gốc rõ ràng, góp phần bảo vệ
+                            môi trường và phát triển bền vững.
+                        </li>
+                    </ul>
+
+                    <h2>Đội Ngũ Nghệ Nhân</h2>
+                    <p>
+                        Sức mạnh của <strong>[Tên Doanh Nghiệp]</strong> nằm ở đội ngũ nghệ nhân lành nghề, những người
+                        có đôi bàn tay khéo léo và con mắt thẩm mỹ tinh tường. Từng chi tiết chạm trổ, từng đường bo góc
+                        đều được thực hiện thủ công tỉ mỉ, đảm bảo sự độc bản và tinh tế cho từng sản phẩm xuất xưởng.
+                    </p>
+
+                    <p>
+                        Chúng tôi rất vinh dự khi được đồng hành cùng Quý khách trong việc xây dựng tổ ấm. Hãy để
+                        <strong>[Tên Doanh Nghiệp]</strong> mang hơi thở của thiên nhiên và sự ấm áp vào ngôi nhà của
+                        bạn.
+                    </p>
+
+                    <div class="footer-about">
+                        <p><strong>[Tên Doanh Nghiệp] - Tinh Hoa Đồ Gỗ Việt</strong></p>
+                        <p>Địa chỉ: [Địa chỉ xưởng/Showroom] | Hotline: [Số điện thoại]</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+
+{% endblock about %}

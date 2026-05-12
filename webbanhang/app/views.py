@@ -5,7 +5,10 @@ from django.contrib import messages
 from django.http import HttpResponse, JsonResponse
 from django.db.models import Q
 from django.utils.text import slugify
+from django.views.decorators.csrf import csrf_exempt
 from .models import *
+import os
+import uuid
 import json
 from .utils import cookieCart
 from .forms import CreateUserForm
@@ -223,3 +226,47 @@ def guarantee(request):
     }
     
     return render(request, "app/guarantee.html", context)
+
+def about(request):
+    customer = None
+    if request.user.is_authenticated:
+        customer = request.user
+        order, created = Order.objects.get_or_create(customer=customer, complete=False)
+        items = order.orderitem_set.all()
+    else:
+        cookieData = cookieCart(request)
+        items = cookieData['items']
+        order = cookieData['order']
+    
+    categories = Category.objects.filter(is_sub=False)
+    
+    context = {
+        'items': items,
+        'order': order,
+        'customer': customer,
+        'categories': categories
+    }
+    
+    return render(request, "app/about.html", context)
+
+@csrf_exempt
+def tinymce_upload(request):
+    if request.method == 'POST' and request.FILES.get('file'):
+        file = request.FILES['file']
+        ext = file.name.split('.')[-1]
+        filename = f"{uuid.uuid4()}.{ext}"
+        
+        # Save to static directory matching the project's logic
+        save_dir = os.path.join('app', 'static', 'app', 'images', 'tinymce')
+        os.makedirs(save_dir, exist_ok=True)
+        save_path = os.path.join(save_dir, filename)
+        
+        with open(save_path, 'wb+') as destination:
+            for chunk in file.chunks():
+                destination.write(chunk)
+                
+        # URL matching STATIC_URL logic in this project
+        file_url = f"/static/app/images/tinymce/{filename}"
+        return JsonResponse({'location': file_url})
+    return JsonResponse({'error': 'Invalid request'}, status=400)
+

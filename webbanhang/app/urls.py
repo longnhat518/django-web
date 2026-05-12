@@ -14,4 +14,6 @@ urlpatterns = [
     path("product/<slug:slug>/", views.detail, name="detail"),
     path("all-product/", views.all_product, name="all_product"),
     path("guarantee/", views.guarantee, name="guarantee"),
+    path('about/', views.about, name='about'),
+    path('tinymce_upload/', views.tinymce_upload, name='tinymce_upload'),
 ]
