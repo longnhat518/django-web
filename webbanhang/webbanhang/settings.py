@@ -83,7 +83,7 @@ WSGI_APPLICATION = "webbanhang.wsgi.application"
 #     }
 # }
 
-SUPABASE_DB_URL = "postgresql://postgres.rconrcldhywtbwinxrno:buitien1231@aws-1-ap-south-1.pooler.supabase.com:6543/postgres"
+SUPABASE_DB_URL = "postgresql://postgres.rconrcldhywtbwinxrno:[password]@aws-1-ap-south-1.pooler.supabase.com:6543/postgres"
 DATABASES = {
     "default": dj_database_url.parse(SUPABASE_DB_URL, conn_max_age=600),
 }
@@ -129,8 +129,8 @@ TINYMCE_DEFAULT_CONFIG = {
     "height": 500,
     "width": "100%",
     "menubar": "file edit view insert format tools table help",
-    "plugins": "advlist autolink lists link image charmap print preview anchor searchreplace visualblocks code fullscreen insertdatetime media table paste code help wordcount",
-    "toolbar": "undo redo | bold italic underline strikethrough | fontselect fontsizeselect formatselect | alignleft aligncenter alignright alignjustify | outdent indent |  numlist bullist | forecolor backcolor removeformat | pagebreak | charmap emoticons | fullscreen  preview save print | insertfile image media template link anchor codesample | ltr rtl",
+    "plugins": "advlist autolink lists link image charmap preview anchor searchreplace visualblocks code fullscreen insertdatetime media table code help wordcount",
+    "toolbar": "undo redo | bold italic underline strikethrough | fontselect fontsizeselect formatselect | alignleft aligncenter alignright alignjustify | outdent indent |  numlist bullist | forecolor backcolor removeformat | pagebreak | charmap emoticons | fullscreen  preview save | insertfile image media template link anchor codesample | ltr rtl",
     "custom_undo_redo_levels": 10,
     "images_upload_url": "/tinymce_upload/",
     "file_picker_types": "image",

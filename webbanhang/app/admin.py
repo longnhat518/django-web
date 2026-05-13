@@ -18,6 +18,8 @@ class ProductAdmin(admin.ModelAdmin):
     list_filter = ('is_featured', 'is_on_sale', 'digital')
     search_fields = ('name',)
     list_editable = ('is_featured', 'is_on_sale', 'digital', 'sold_count', 'quantity')
+    class Media:
+        js = ('app/js/slugify.js',)
 
 class OrderAdmin(admin.ModelAdmin):
     list_display = ('id','customer', 'date_ordered', 'complete', 'transaction_id')
@@ -61,6 +63,8 @@ class NewsAdmin(admin.ModelAdmin):
     search_fields = ('title',)
     list_filter = ('is_published', 'date_added')
     readonly_fields = ('image_preview',)
+    class Media:
+        js = ('app/js/slugify.js',)
 
     def image_preview(self, obj):
         from django.utils.html import mark_safe

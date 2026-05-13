@@ -33,7 +33,7 @@ document.addEventListener('DOMContentLoaded', function() {
         return str;
     }
 
-    var nameField = document.getElementById('id_name');
+    var nameField = document.getElementById('id_name') || document.getElementById('id_title');
     var slugField = document.getElementById('id_slug');
 
     if (nameField && slugField) {
