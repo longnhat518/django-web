@@ -6,6 +6,7 @@ from django.http import HttpResponse, JsonResponse
 from django.db.models import Q
 from django.utils.text import slugify
 from django.views.decorators.csrf import csrf_exempt
+from django.core.paginator import Paginator
 from .models import *
 import os
 import uuid
@@ -29,6 +30,7 @@ def home(request):
     sale_products = Product.objects.filter(is_on_sale=True)
     banners = Banner.objects.filter(is_active=True).order_by('order')[:5]
     categories = Category.objects.filter(is_sub=False)
+    news_list = News.objects.filter(is_published=True).order_by('-date_added')[:7]
     
     context = {
         'products': products,
@@ -39,6 +41,7 @@ def home(request):
         'order': order,
         'customer': customer,
         'categories': categories,
+        'news_list': news_list,
     }
     return render(request, "app/home.html", context)
 
@@ -270,3 +273,60 @@ def tinymce_upload(request):
         return JsonResponse({'location': file_url})
     return JsonResponse({'error': 'Invalid request'}, status=400)
 
+def news_list(request):
+    customer = None
+    if request.user.is_authenticated:
+        customer = request.user
+        order, created = Order.objects.get_or_create(customer=customer, complete=False)
+        items = order.orderitem_set.all()
+    else:
+        cookieData = cookieCart(request)
+        items = cookieData['items']
+        order = cookieData['order']
+    
+    categories = Category.objects.filter(is_sub=False)
+    news = News.objects.filter(is_published=True).order_by('-date_added')
+    latest_news = News.objects.filter(is_published=True).order_by('-date_added')[:5]
+    
+    paginator = Paginator(news, 6) # 6 bài trên 1 trang
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+    
+    context = {
+        'items': items,
+        'order': order,
+        'customer': customer,
+        'categories': categories,
+        'page_obj': page_obj,
+        'latest_news': latest_news,
+    }
+    return render(request, "app/news_list.html", context)
+
+def news_detail(request, slug):
+    customer = None
+    if request.user.is_authenticated:
+        customer = request.user
+        order, created = Order.objects.get_or_create(customer=customer, complete=False)
+        items = order.orderitem_set.all()
+    else:
+        cookieData = cookieCart(request)
+        items = cookieData['items']
+        order = cookieData['order']
+    
+    categories = Category.objects.filter(is_sub=False)
+    try:
+        news_item = News.objects.get(slug=slug, is_published=True)
+    except News.DoesNotExist:
+        return redirect("news_list")
+        
+    latest_news = News.objects.filter(is_published=True).exclude(id=news_item.id).order_by('-date_added')[:5]
+    
+    context = {
+        'items': items,
+        'order': order,
+        'customer': customer,
+        'categories': categories,
+        'news_item': news_item,
+        'latest_news': latest_news,
+    }
+    return render(request, "app/news_detail.html", context)

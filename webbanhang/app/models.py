@@ -259,3 +259,50 @@ def auto_delete_banner_on_delete(sender, instance, **kwargs):
     if instance.image:
         if os.path.isfile(instance.image.path):
             os.remove(instance.image.path)
+
+class News(models.Model):
+    title = models.CharField(max_length=255, verbose_name="Tiêu đề")
+    slug = models.SlugField(max_length=255, unique=True, null=True, blank=True, verbose_name="Đường dẫn (Slug)")
+    short_description = models.TextField(null=True, blank=True, verbose_name="Mô tả ngắn")
+    content = HTMLField(verbose_name="Nội dung bài viết")
+    image = models.ImageField(upload_to=image_upload_path, null=True, blank=True, verbose_name="Hình ảnh đại diện")
+    date_added = models.DateTimeField(auto_now_add=True, verbose_name="Ngày đăng")
+    is_published = models.BooleanField(default=True, verbose_name="Hiển thị")
+
+    class Meta:
+        verbose_name = "Tin tức"
+        verbose_name_plural = "Quản lý Tin tức"
+        ordering = ['-date_added']
+
+    def __str__(self):
+        return self.title
+
+    def save(self, *args, **kwargs):
+        if not self.slug and self.title:
+            base_slug = slugify(self.title)
+            slug = base_slug
+            counter = 1
+            while News.objects.filter(slug=slug).exists():
+                slug = f'{base_slug}-{counter}'
+                counter += 1
+            self.slug = slug
+        super().save(*args, **kwargs)
+
+    @property
+    def imageURL(self):
+        try:
+            url = self.image.url
+            url = url.replace('\\', '/')
+            if '/app/static/' in url:
+                url = url.replace('/app/static/', '/static/')
+            elif url.startswith('app/static/'):
+                url = url.replace('app/static/', '/static/')
+        except:
+            url = ''
+        return url
+
+@receiver(post_delete, sender=News)
+def auto_delete_news_image_on_delete(sender, instance, **kwargs):
+    if instance.image:
+        if os.path.isfile(instance.image.path):
+            os.remove(instance.image.path)

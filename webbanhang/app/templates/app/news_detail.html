@@ -1,0 +1,88 @@
+{% extends 'app/base.html' %}
+{% load static %}
+
+{% block main-content %}
+<div class="container py-5 mt-4">
+  <!-- Breadcrumb -->
+  <nav aria-label="breadcrumb" class="mb-4">
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item"><a href="{% url 'home' %}" class="text-decoration-none text-muted">Trang chủ</a></li>
+      <li class="breadcrumb-item"><a href="{% url 'news_list' %}" class="text-decoration-none text-muted">Tin tức</a></li>
+      <li class="breadcrumb-item active" aria-current="page">{{ news_item.title }}</li>
+    </ol>
+  </nav>
+
+  <div class="row">
+    <!-- Main Content: News Detail -->
+    <div class="col-lg-9 pe-lg-5">
+      <article class="news-detail mb-5">
+        <h1 class="fw-bold mb-3" style="line-height: 1.4;">{{ news_item.title }}</h1>
+        <div class="d-flex align-items-center text-muted mb-4 pb-3 border-bottom">
+          <span class="me-4"><i class="far fa-calendar-alt me-2"></i>{{ news_item.date_added|date:"d/m/Y - H:i" }}</span>
+        </div>
+        
+        {% if news_item.short_description %}
+        <div class="lead fw-semibold mb-4 text-secondary">
+          {{ news_item.short_description }}
+        </div>
+        {% endif %}
+        
+        <div class="news-content" style="font-size: 16px; line-height: 1.8; color: #333;">
+          {{ news_item.content|safe }}
+        </div>
+      </article>
+      
+      <!-- Nút quay lại -->
+      <div class="mt-5 pt-3 border-top">
+        <a href="{% url 'news_list' %}" class="btn btn-outline-dark px-4 py-2 rounded-pill">
+          <i class="fas fa-arrow-left me-2"></i> Quay lại danh sách tin tức
+        </a>
+      </div>
+    </div>
+
+    <!-- Sidebar: Bắt đầu bên phải -->
+    <div class="col-lg-3 mt-5 mt-lg-0">
+      <div class="sidebar position-sticky" style="top: 20px;">
+        <!-- Bài viết mới nhất -->
+        <div class="widget mb-5">
+          <h5 class="fw-bold mb-4 pb-2 border-bottom text-uppercase">BÀI VIẾT KHÁC</h5>
+          <div class="latest-news-list">
+            {% for latest in latest_news %}
+            <div class="d-flex align-items-start mb-3 pb-3 border-bottom">
+              <div class="flex-shrink-0 me-3" style="width: 80px; height: 60px;">
+                <a href="{% url 'news_detail' latest.slug %}" class="d-block w-100 h-100 rounded overflow-hidden">
+                  <img src="{{ latest.imageURL }}" class="w-100 h-100 object-fit-cover" alt="{{ latest.title }}">
+                </a>
+              </div>
+              <div class="flex-grow-1">
+                <h6 class="mb-1" style="font-size: 14px; line-height: 1.4;">
+                  <a href="{% url 'news_detail' latest.slug %}" class="text-dark text-decoration-none fw-semibold">
+                    {{ latest.title|truncatechars:50 }}
+                  </a>
+                </h6>
+                <small class="text-muted">{{ latest.date_added|date:"d/m/Y" }}</small>
+              </div>
+            </div>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Sidebar: Kết thúc bên phải -->
+
+  </div>
+</div>
+
+<style>
+  /* Cấu hình thêm CSS cho nội dung bài viết nếu TinyMCE gen ra bị lỗi giao diện */
+  .news-content img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 8px;
+    margin: 1rem 0;
+  }
+  .object-fit-cover {
+    object-fit: cover;
+  }
+</style>
+{% endblock %}

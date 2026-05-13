@@ -55,4 +55,21 @@ admin.site.register(ShippingAddress)
 admin.site.register(Category, CategoryAdmin)
 admin.site.register(Banner, BannerAdmin)
 
+class NewsAdmin(admin.ModelAdmin):
+    list_display = ('title', 'slug', 'image_preview', 'date_added', 'is_published')
+    list_editable = ('is_published',)
+    search_fields = ('title',)
+    list_filter = ('is_published', 'date_added')
+    readonly_fields = ('image_preview',)
+
+    def image_preview(self, obj):
+        from django.utils.html import mark_safe
+        if obj.imageURL:
+            return mark_safe(f'<img src="{obj.imageURL}" style="max-height: 50px; border-radius: 5px; border: 1px solid #ccc" />')
+        return "Chưa có ảnh"
+    image_preview.short_description = "Ảnh đại diện"
+
+admin.site.register(News, NewsAdmin)
+
+
 

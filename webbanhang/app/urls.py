@@ -16,4 +16,6 @@ urlpatterns = [
     path("guarantee/", views.guarantee, name="guarantee"),
     path('about/', views.about, name='about'),
     path('tinymce_upload/', views.tinymce_upload, name='tinymce_upload'),
+    path('news/', views.news_list, name='news_list'),
+    path('news/<slug:slug>/', views.news_detail, name='news_detail'),
 ]
