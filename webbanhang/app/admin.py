@@ -14,12 +14,12 @@ class ProductImageInline(admin.TabularInline):
 
 class ProductAdmin(admin.ModelAdmin):
     inlines = [ProductImageInline]
-    list_display = ('id','name', 'price', 'old_price', 'is_featured', 'is_on_sale', 'digital', 'sold_count', 'quantity')
+    list_display = ('name', 'price', 'old_price', 'is_featured', 'is_on_sale', 'digital', 'sold_count', 'quantity')
     list_filter = ('is_featured', 'is_on_sale', 'digital')
     search_fields = ('name',)
     list_editable = ('is_featured', 'is_on_sale', 'digital', 'sold_count', 'quantity')
     class Media:
-        js = ('app/js/slugify.js',)
+        js = ('app/js/slugify.js', 'app/js/image_preview.js')
 
 class OrderAdmin(admin.ModelAdmin):
     list_display = ('id','customer', 'date_ordered', 'complete', 'transaction_id')
@@ -37,6 +37,9 @@ class BannerAdmin(admin.ModelAdmin):
     list_display = ("id", "subtitle", "image_preview", "is_active", "order")
     list_editable = ("is_active", "order")
     readonly_fields = ("image_preview",)
+    
+    class Media:
+        js = ('app/js/image_preview.js',)
 
     def image_preview(self, obj):
         from django.utils.html import mark_safe
@@ -64,7 +67,7 @@ class NewsAdmin(admin.ModelAdmin):
     list_filter = ('is_published', 'date_added')
     readonly_fields = ('image_preview',)
     class Media:
-        js = ('app/js/slugify.js',)
+        js = ('app/js/slugify.js', 'app/js/image_preview.js')
 
     def image_preview(self, obj):
         from django.utils.html import mark_safe

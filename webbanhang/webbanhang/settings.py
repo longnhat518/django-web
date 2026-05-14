@@ -134,4 +134,7 @@ TINYMCE_DEFAULT_CONFIG = {
     "custom_undo_redo_levels": 10,
     "images_upload_url": "/tinymce_upload/",
     "file_picker_types": "image",
+    "relative_urls": False,
+    "remove_script_host": False,
+    "document_base_url": "/",
 }
