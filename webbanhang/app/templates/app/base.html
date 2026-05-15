@@ -34,7 +34,7 @@
         <div class="collapse navbar-collapse" id="nav">
           <ul class="navbar-nav me-auto ms-3">
             <li class="nav-item dropdown">
-              <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">Sản phẩm</a>
+              <a class="nav-link dropdown-toggle" href="{% url 'all_product' %}" role="button" data-bs-toggle="dropdown" aria-expanded="false">Sản phẩm</a>
               <ul class="dropdown-menu border-0 shadow" style="min-width: 220px; border-radius: 8px;">
                 {% for category in categories %}
                   {% if category.sub_categories.all %}

@@ -204,7 +204,12 @@
             }
         }
         console.log('CART:', cart);
-        document.cookie = 'cart=' + JSON.stringify(cart) + ";domain=;path=/";
+        
+        var date = new Date();
+        date.setTime(date.getTime() + (120 * 1000)); // 120 seconds
+        var expires = "expires=" + date.toUTCString();
+        
+        document.cookie = 'cart=' + JSON.stringify(cart) + ";" + expires + ";domain=;path=/";
         location.reload();
     }
 </script>

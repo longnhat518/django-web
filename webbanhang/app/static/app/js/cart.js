@@ -64,7 +64,7 @@ function addCookieItem(productId, action){
     // Tự cài đặt thời gian sống của cookie (ví dụ: 30 ngày)
     var expDays = 30; // Bạn có thể thay đổi số ngày lưu cookie tại đây
     var date = new Date();
-    date.setTime(date.getTime() + (3600 * 1000));
+    date.setTime(date.getTime() + (120 * 1000));
     var expires = "expires=" + date.toUTCString();
     
     // Lưu lại cookie với thời hạn 
