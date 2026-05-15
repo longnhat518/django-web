@@ -39,18 +39,18 @@
                 {% for category in categories %}
                   {% if category.sub_categories.all %}
                   <li class="dropdown-submenu position-relative">
-                    <a class="dropdown-item d-flex justify-content-between align-items-center py-2" href="{% url 'category' %}?category={{category.slug}}">
+                    <a class="dropdown-item d-flex justify-content-between align-items-center py-2" href="{% url 'all_product' %}?category={{category.slug}}">
                       {{category.name}} <i class="fas fa-chevron-right text-muted" style="font-size: 10px;"></i>
                     </a>
                     <ul class="dropdown-menu border-0 shadow position-absolute" style="top: 0; left: 100%; min-width: 220px; border-radius: 8px; margin-top: -8px; display: none;">
-                      <li><a class="dropdown-item fw-bold py-2 border-bottom" href="{% url 'category' %}?category={{category.slug}}">Tất cả {{category.name}}</a></li>
+                      <li><a class="dropdown-item fw-bold py-2 border-bottom" href="{% url 'all_product' %}?category={{category.slug}}">Tất cả {{category.name}}</a></li>
                       {% for sub in category.sub_categories.all %}
-                      <li><a class="dropdown-item py-2" href="{% url 'category' %}?category={{sub.slug}}">{{sub.name}}</a></li>
+                      <li><a class="dropdown-item py-2" href="{% url 'all_product' %}?category={{sub.slug}}">{{sub.name}}</a></li>
                       {% endfor %}
                     </ul>
                   </li>
                   {% else %}
-                  <li><a class="dropdown-item py-2" href="{% url 'category' %}?category={{category.slug}}">{{category.name}}</a></li>
+                  <li><a class="dropdown-item py-2" href="{% url 'all_product' %}?category={{category.slug}}">{{category.name}}</a></li>
                   {% endif %}
                 {% endfor %}
               </ul>
@@ -62,13 +62,12 @@
               <a class="nav-link" href="{% url 'news_list' %}">Tin tức</a>
             </li>
           </ul>
-          <form class="d-flex gap-2 me-3" method="POST" role="search" action="{% url 'search' %}">
-            {% csrf_token %}
+          <form class="d-flex gap-2 me-3" method="GET" role="search" action="{% url 'all_product' %}">
             <input
               class="form-control"
               type="search"
               placeholder="Tìm kiếm sản phẩm..."
-              name="search"
+              name="q"
             />
             <button class="btn btn-outline-success" type="submit">Search</button>
           </form>

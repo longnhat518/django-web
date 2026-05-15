@@ -196,15 +196,74 @@ def all_product(request):
         items = cookieData['items']
         order = cookieData['order']
     
-    product = Product.objects.all()
+    products = Product.objects.all()
+    
+    # 1. Search Query
+    query = request.GET.get('q', '')
+    if query:
+        products = products.filter(Q(name__icontains=query) | Q(slug__icontains=slugify(query)))
+        
+    # 2. Category Filter
+    category_slugs = request.GET.getlist('category')
+    if category_slugs:
+        products = products.filter(category__slug__in=category_slugs).distinct()
+        
+    # 3. Price Filter
+    min_price = request.GET.get('min_price')
+    max_price = request.GET.get('max_price')
+    if min_price and min_price.isdigit():
+        products = products.filter(price__gte=min_price)
+    if max_price and max_price.isdigit():
+        products = products.filter(price__lte=max_price)
+        
+    # 4. Status Filter
+    in_stock = request.GET.get('in_stock')
+    if in_stock:
+        products = products.filter(quantity__gt=0)
+        
+    is_sale = request.GET.get('is_sale')
+    if is_sale:
+        products = products.filter(is_on_sale=True)
+        
+    is_featured = request.GET.get('is_featured')
+    if is_featured:
+        products = products.filter(is_featured=True)
+        
+    # 5. Sorting
+    sort_by = request.GET.get('sort', 'newest')
+    if sort_by == 'price_asc':
+        products = products.order_by('price', '-id')
+    elif sort_by == 'price_desc':
+        products = products.order_by('-price', '-id')
+    elif sort_by == 'bestseller':
+        products = products.order_by('-sold_count', '-id')
+    else: # newest
+        products = products.order_by('-id')
+        
+    # 6. Pagination
+    paginator = Paginator(products, 12) # 12 products per page
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+        
     categories = Category.objects.filter(is_sub=False)
     
     context = {
-        'products': product,
+        'products': page_obj.object_list, # Current items for the page
+        'page_obj': page_obj,
         'categories': categories,
         'items': items,
         'order': order,
-        'customer': customer
+        'customer': customer,
+        
+        # Pass back values for preserving filter states in UI
+        'query': query,
+        'selected_categories': category_slugs,
+        'min_price': min_price,
+        'max_price': max_price,
+        'in_stock': in_stock,
+        'is_sale': is_sale,
+        'is_featured': is_featured,
+        'sort_by': sort_by,
     }
     return render(request, "app/all_product.html", context)
 
