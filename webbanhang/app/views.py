@@ -499,8 +499,8 @@ def payment_success(request):
         # Nếu guest, xóa giỏ hàng từ cookie
         # Xóa giỏ hàng trên trình duyệt bằng cách trả về một response yêu cầu xóa cookie
         pass
-    
-    context = {'customer': customer}
+    categories = Category.objects.filter(is_sub=False)
+    context = {'customer': customer, 'categories': categories}
     response = render(request, "app/payment_success.html", context)
     if not request.user.is_authenticated:
         response.delete_cookie('cart')
