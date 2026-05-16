@@ -136,10 +136,17 @@ def auto_delete_file_on_delete(sender, instance, **kwargs):
             os.remove(instance.image.path)
 
 class Order(models.Model):
+    STATUS_CHOICES = (
+        ('chuẩn bị hàng', 'Chuẩn bị hàng'),
+        ('đang giao', 'Đang giao'),
+        ('đã giao', 'Đã giao'),
+    )
     customer = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
     date_ordered = models.DateTimeField(auto_now_add=True)
     complete = models.BooleanField(default=False, blank=True)
     transaction_id = models.CharField(max_length=100, null=True)
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='chuẩn bị hàng', verbose_name='Trạng thái đơn hàng')
+    payment_method = models.CharField(max_length=50, null=True, blank=True, verbose_name='Phương thức thanh toán')
 
     def __str__(self):
         return str(self.id)

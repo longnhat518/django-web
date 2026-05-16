@@ -1,0 +1,111 @@
+{% extends 'app/base.html' %}
+{% load static %}
+{% block content_checkout %}
+<section class="py-5" style="background-color: #f4f6f8; min-height: 80vh;">
+  <div class="container">
+    <div class="row">
+      <!-- Sidebar -->
+      <div class="col-lg-3 mb-4">
+        <div class="card-custom p-4 shadow-sm border-0" style="border-radius: 12px;">
+          <div class="text-center mb-4">
+            <div class="bg-primary text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-2" style="width: 60px; height: 60px; font-size: 24px;">
+              {{ customer.username|make_list|first|upper }}
+            </div>
+            <h5 class="fw-bold mb-0">{{ customer.username }}</h5>
+            <p class="text-muted small">{{ customer.email }}</p>
+          </div>
+          <div class="list-group list-group-flush" style="font-size: 15px;">
+            <a href="#" class="list-group-item list-group-item-action py-3 border-0"><i class="fas fa-user text-muted me-2"></i>Thông tin tài khoản</a>
+            <a href="{% url 'order_history' %}" class="list-group-item list-group-item-action py-3 border-0 active fw-bold" style="background-color: #f0f4f8; color: #0d6efd; border-radius: 8px;"><i class="fas fa-box text-primary me-2"></i>Lịch sử đơn hàng</a>
+            <a href="{% url 'logout' %}" class="list-group-item list-group-item-action py-3 border-0 text-danger"><i class="fas fa-sign-out-alt me-2"></i>Đăng xuất</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Main Content -->
+      <div class="col-lg-9">
+        <h4 class="fw-bold mb-4">Lịch sử đơn hàng của bạn</h4>
+        
+        {% if past_orders %}
+          {% for order in past_orders %}
+          <div class="card-custom p-4 shadow-sm border-0 mb-4" style="border-radius: 12px;">
+            <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-3 pb-3 border-bottom">
+              <div>
+                <h6 class="fw-bold mb-1">Mã đơn hàng: #{{ order.transaction_id }}</h6>
+                <p class="text-muted small mb-1"><i class="far fa-clock me-1"></i> Đặt ngày: {{ order.date_ordered|date:"d/m/Y H:i" }}</p>
+                <p class="text-muted small mb-0"><i class="fas fa-credit-card me-1"></i> Thanh toán: 
+                  {% if order.payment_method == 'transfer' %}
+                    <span class="text-primary">Chuyển khoản VietQR</span>
+                  {% elif order.payment_method == 'cod' %}
+                    <span class="text-secondary">Thanh toán khi nhận hàng (COD)</span>
+                  {% else %}
+                    Chưa xác định
+                  {% endif %}
+                </p>
+              </div>
+              <div class="mt-2 mt-md-0">
+                {% if order.status == 'chuẩn bị hàng' %}
+                  <span class="badge bg-warning text-dark px-3 py-2" style="border-radius: 20px;"><i class="fas fa-box-open me-1"></i> Đang chuẩn bị</span>
+                {% elif order.status == 'đang giao' %}
+                  <span class="badge bg-info text-white px-3 py-2" style="border-radius: 20px;"><i class="fas fa-truck me-1"></i> Đang giao</span>
+                {% elif order.status == 'đã giao' %}
+                  <span class="badge bg-success text-white px-3 py-2" style="border-radius: 20px;"><i class="fas fa-check-circle me-1"></i> Đã giao</span>
+                {% else %}
+                  <span class="badge bg-secondary text-white px-3 py-2" style="border-radius: 20px;">{{ order.status }}</span>
+                {% endif %}
+              </div>
+            </div>
+            
+            <div class="order-items-list mb-3">
+              {% for item in order.orderitem_set.all %}
+              <div class="d-flex align-items-center mb-3">
+                <div style="width: 60px; height: 60px; overflow: hidden; border-radius: 8px; border: 1px solid #eee;" class="flex-shrink-0">
+                  <img src="{{ item.product.imageURL }}" alt="{{ item.product.name }}" class="w-100 h-100" style="object-fit: cover;">
+                </div>
+                <div class="ms-3 flex-grow-1">
+                  <h6 class="mb-1" style="font-size: 14px; font-weight: 600;">{{ item.product.name }}</h6>
+                  <p class="text-muted small mb-0">Số lượng: x{{ item.quantity }}</p>
+                </div>
+                <div class="text-end fw-bold" style="font-size: 15px;">
+                  {{ item.get_total|floatformat:"0" }}đ
+                </div>
+              </div>
+              {% endfor %}
+            </div>
+            
+            <div class="d-flex justify-content-end align-items-center pt-3 border-top">
+              <span class="text-muted me-3">Tổng tiền:</span>
+              <span class="fw-bold text-danger" style="font-size: 18px;">{{ order.get_cart_total|floatformat:"0" }}đ</span>
+            </div>
+          </div>
+          {% endfor %}
+        {% else %}
+          <div class="text-center py-5 bg-white shadow-sm" style="border-radius: 12px;">
+            <i class="fas fa-shopping-bag text-muted mb-3" style="font-size: 60px; opacity: 0.5;"></i>
+            <h5>Bạn chưa có đơn hàng nào</h5>
+            <p class="text-muted">Hãy khám phá các sản phẩm của chúng tôi và đặt đơn hàng đầu tiên nhé!</p>
+            <a href="{% url 'home' %}" class="btn btn-primary px-4 py-2 mt-2" style="border-radius: 8px;">Tiếp tục mua sắm</a>
+          </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .card-custom {
+    background-color: #ffffff;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+  .card-custom:hover {
+    box-shadow: 0 .5rem 1rem rgba(0,0,0,.08)!important;
+  }
+  .list-group-item {
+    transition: all 0.2s ease;
+  }
+  .list-group-item:hover:not(.active) {
+    background-color: #f8f9fa;
+    padding-left: 20px;
+  }
+</style>
+{% endblock content_checkout %}

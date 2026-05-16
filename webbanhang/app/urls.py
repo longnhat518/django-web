@@ -18,4 +18,8 @@ urlpatterns = [
     path('tinymce_upload/', views.tinymce_upload, name='tinymce_upload'),
     path('news/', views.news_list, name='news_list'),
     path('news/<slug:slug>/', views.news_detail, name='news_detail'),
+    path('process_order/', views.process_order, name='process_order'),
+    path('payment_success/', views.payment_success, name='payment_success'),
+    path('payment_cancel/', views.payment_cancel, name='payment_cancel'),
+    path('order-history/', views.order_history, name='order_history'),
 ]

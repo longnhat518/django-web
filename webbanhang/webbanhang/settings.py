@@ -135,6 +135,11 @@ TINYMCE_DEFAULT_CONFIG = {
     "images_upload_url": "/tinymce_upload/",
     "file_picker_types": "image",
     "relative_urls": False,
-    "remove_script_host": False,
     "document_base_url": "/",
 }
+
+# PayOS Configuration
+# VUI LÒNG ĐIỀN THÔNG TIN TÀI KHOẢN PAYOS CỦA BẠN VÀO ĐÂY
+PAYOS_CLIENT_ID = ""
+PAYOS_API_KEY = ""
+PAYOS_CHECKSUM_KEY = ""

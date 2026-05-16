@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.utils.html import mark_safe
-from .models import *
+from .models import Product, Category, ProductImage, Order, OrderItem, ShippingAddress, Banner, News
 
 
 class CategoryAdmin(admin.ModelAdmin):
@@ -22,10 +22,37 @@ class ProductAdmin(admin.ModelAdmin):
         js = ('app/js/slugify.js', 'app/js/image_preview.js')
 
 class OrderAdmin(admin.ModelAdmin):
-    list_display = ('id','customer', 'date_ordered', 'complete', 'transaction_id')
-    list_filter = ('complete', 'date_ordered')
+    list_display = ('id', 'customer', 'date_ordered', 'transaction_id', 'payment_method', 'complete', 'status', 'colored_status', 'get_total')
+    list_filter = ('status', 'complete', 'date_ordered')
     search_fields = ('customer__username', 'transaction_id')
-    list_editable = ('complete',)
+    list_editable = ('complete', 'status')
+
+    def get_queryset(self, request):
+        qs = super().get_queryset(request)
+        return qs.prefetch_related('orderitem_set__product')
+
+    def colored_status(self, obj):
+        from django.utils.html import format_html
+        if obj.status == 'chuẩn bị hàng':
+            color = '#f0ad4e' # orange
+        elif obj.status == 'đang giao':
+            color = '#0dcaf0' # blue
+        elif obj.status == 'đã giao':
+            color = '#198754' # green
+        else:
+            color = 'gray'
+        return format_html(
+            '<span style="color: white; background-color: {}; padding: 4px 8px; border-radius: 12px; font-size: 11px; white-space: nowrap;">{}</span>',
+            color, obj.get_status_display()
+        )
+    colored_status.short_description = 'Nhãn'
+
+    def get_total(self, obj):
+        from django.utils.html import format_html
+        total = obj.get_cart_total
+        formatted_total = "{:,.0f}".format(total).replace(',', '.')
+        return format_html('<strong style="color: #dc3545;">{}đ</strong>', formatted_total)
+    get_total.short_description = 'Tổng tiền'
 
 class OrderItemAdmin(admin.ModelAdmin):
     list_display = ('id','product', 'order', 'quantity', 'date_added')

@@ -1,4 +1,7 @@
+from .models import Product, Order, OrderItem, Category, Banner, News, ShippingAddress
 from itertools import product
+from .utils import cookieCart
+from .forms import CreateUserForm
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
@@ -7,12 +10,16 @@ from django.db.models import Q
 from django.utils.text import slugify
 from django.views.decorators.csrf import csrf_exempt
 from django.core.paginator import Paginator
-from .models import *
 import os
 import uuid
 import json
-from .utils import cookieCart
-from .forms import CreateUserForm
+
+
+from django.conf import settings
+from django.urls import reverse
+from payos import PayOS
+from payos.types import CreatePaymentLinkRequest, ItemData
+import datetime
 
 # Create your views here.
 def home(request):
@@ -389,3 +396,139 @@ def news_detail(request, slug):
         'latest_news': latest_news,
     }
     return render(request, "app/news_detail.html", context)
+
+@csrf_exempt
+def process_order(request):
+    if request.method == 'POST':
+        transaction_id = int(datetime.datetime.now().timestamp())
+        data = json.loads(request.body)
+        
+        customer = None
+        if request.user.is_authenticated:
+            customer = request.user
+            order, created = Order.objects.get_or_create(customer=customer, complete=False)
+        else:
+            cookieData = cookieCart(request)
+            items = cookieData['items']
+            order = Order.objects.create(complete=False)
+            for item in items:
+                try:
+                    product = Product.objects.get(id=item['product']['id'])
+                    OrderItem.objects.create(
+                        product=product,
+                        order=order,
+                        quantity=item['quantity']
+                    )
+                except:
+                    pass
+                
+        order.transaction_id = str(transaction_id)
+        # Nếu thanh toán chuyển khoản, chưa hoàn tất đơn hàng vội. Nếu COD thì coi như xong bước đặt hàng.
+        payment_method = data.get('pay', 'cod')
+        order.payment_method = payment_method
+        if payment_method == 'cod':
+            order.status = 'chuẩn bị hàng'
+            order.complete = True
+        
+        order.save()
+        
+        ShippingAddress.objects.create(
+            customer=request.user if request.user.is_authenticated else None,
+            order=order,
+            address=data['form'].get('address', ''),
+            city=data['form'].get('city', ''),
+            mobile=data['form'].get('phone', ''),
+        )
+        
+        if payment_method == 'transfer':
+            # Initialize PayOS
+            try:
+                client = PayOS(
+                    client_id=settings.PAYOS_CLIENT_ID,
+                    api_key=settings.PAYOS_API_KEY,
+                    checksum_key=settings.PAYOS_CHECKSUM_KEY
+                )
+                
+                domain = request.build_absolute_uri('/')[:-1]
+                return_url = domain + reverse('payment_success')
+                cancel_url = domain + reverse('payment_cancel')
+                
+                amount = int(order.get_cart_total)
+                if amount > 0:
+                    # Tạo danh sách ItemData nếu cần (tuỳ chọn)
+                    items_data = []
+                    for item in order.orderitem_set.all():
+                        items_data.append(ItemData(name=item.product.name, quantity=item.quantity, price=int(item.product.price)))
+
+                    payment_data = CreatePaymentLinkRequest(
+                        order_code=transaction_id,
+                        amount=amount,
+                        description=f"Thanh toan DH {order.id}",
+                        items=items_data,
+                        cancel_url=cancel_url,
+                        return_url=return_url,
+                    )
+                    
+                    response = client.payment_requests.create(payment_data=payment_data)
+                    return JsonResponse({'checkoutUrl': response.checkout_url})
+            except Exception as e:
+                print("Lỗi PayOS:", str(e))
+                return JsonResponse({'error': str(e)}, status=400)
+                
+        # For COD and others
+        return JsonResponse({'checkoutUrl': reverse('payment_success')})
+    return JsonResponse({'error': 'Invalid request'}, status=400)
+
+def payment_success(request):
+    customer = None
+    if request.user.is_authenticated:
+        customer = request.user
+        # Khi thành công, nếu có đơn hàng đang chờ thì đánh dấu hoàn tất.
+        # Ở môi trường thực tế, việc này nên được làm ở webhook.
+        try:
+            order = Order.objects.get(customer=customer, complete=False)
+            order.complete = True
+            order.status = 'chuẩn bị hàng'
+            order.save()
+        except:
+            pass
+        # Reset cart info for view
+        order = {'get_cart_total': 0, 'get_cart_items': 0}
+        items = []
+    else:
+        # Nếu guest, xóa giỏ hàng từ cookie
+        # Xóa giỏ hàng trên trình duyệt bằng cách trả về một response yêu cầu xóa cookie
+        pass
+    
+    context = {'customer': customer}
+    response = render(request, "app/payment_success.html", context)
+    if not request.user.is_authenticated:
+        response.delete_cookie('cart')
+    return response
+
+def payment_cancel(request):
+    context = {}
+    return render(request, "app/payment_cancel.html", context)
+
+def order_history(request):
+    if not request.user.is_authenticated:
+        return redirect('login')
+        
+    customer = request.user
+    # Active cart for navbar
+    order_cart, created = Order.objects.get_or_create(customer=customer, complete=False)
+    cart_items = order_cart.orderitem_set.all()
+    
+    # Completed orders
+    past_orders = Order.objects.filter(customer=customer, complete=True).order_by('-date_ordered')
+    
+    categories = Category.objects.filter(is_sub=False)
+    
+    context = {
+        'items': cart_items,
+        'order': order_cart,
+        'customer': customer,
+        'categories': categories,
+        'past_orders': past_orders,
+    }
+    return render(request, "app/order_history.html", context)
