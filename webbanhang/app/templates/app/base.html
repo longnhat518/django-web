@@ -74,11 +74,15 @@
           {% if customer %}
           <div class="dropdown me-3">
             <a class="dropdown-toggle text-decoration-none" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false" style="color: inherit;">
-              {{customer.username}}
+              {% if customer.first_name or customer.last_name %}
+                {{ customer.first_name }} {{ customer.last_name }}
+              {% else %}
+                {{ customer.username }}
+              {% endif %}
             </a>
             <ul class="dropdown-menu dropdown-menu-end shadow-sm border-0" style="min-width: 200px; font-size: 14px;">
                 <li><a class="dropdown-item py-2" href="{% url 'order_history' %}">Đơn hàng</a></li>
-                <li><a class="dropdown-item py-2" href="#">Thông tin tài khoản</a></li>
+                <li><a class="dropdown-item py-2" href="{% url 'profile' %}">Thông tin tài khoản</a></li>
               <li><hr class="dropdown-divider"></li>
               <li><a class="dropdown-item py-2 text-danger" href="{% url 'logout' %}">Đăng xuất</a></li>
             </ul>

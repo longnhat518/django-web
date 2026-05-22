@@ -32,7 +32,7 @@
           <div class="row g-3">
             <div class="col-md-12">
               <label class="form-label small text-muted fw-bold">Họ và tên người nhận</label>
-              <input type="text" class="form-control form-control-custom" placeholder="Ví dụ: Nguyễn Văn A" value="{%if customer%}{{customer.username}}{%endif%}">
+              <input type="text" class="form-control form-control-custom" placeholder="Ví dụ: Nguyễn Văn A" value="{% if customer %}{% if customer.first_name or customer.last_name %}{{ customer.first_name }} {{ customer.last_name }}{% else %}{{ customer.username }}{% endif %}{% endif %}">
             </div>
             <div class="col-md-6">
               <label class="form-label small text-muted fw-bold">Số điện thoại</label>

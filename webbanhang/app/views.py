@@ -115,8 +115,10 @@ def register(request):
 def loginView(request):
     if request.user.is_authenticated:
         return redirect("home")
+    
+    username = ""
     if request.method =="POST":
-        username = request.POST.get("username")
+        username = request.POST.get("username", "")
         password = request.POST.get("password")
         user = authenticate(request, username=username, password=password)
         if user is not None:
@@ -125,7 +127,7 @@ def loginView(request):
         else:
             messages.error(request, "Tên đăng nhập hoặc mật khẩu không chính xác.")
     
-    return render(request, "app/login.html")
+    return render(request, "app/login.html", {"username": username})
 
 def logoutUser(request):
     logout(request)
@@ -532,3 +534,35 @@ def order_history(request):
         'past_orders': past_orders,
     }
     return render(request, "app/order_history.html", context)
+
+def profile(request):
+    if not request.user.is_authenticated:
+        return redirect('login')
+        
+    customer = request.user
+    order, created = Order.objects.get_or_create(customer=customer, complete=False)
+    items = order.orderitem_set.all()
+    categories = Category.objects.filter(is_sub=False)
+    
+    if request.method == 'POST':
+        first_name = request.POST.get('first_name', '').strip()
+        last_name = request.POST.get('last_name', '').strip()
+        email = request.POST.get('email', '').strip()
+        
+        if not email:
+            messages.error(request, 'Email không được để trống.')
+        else:
+            customer.first_name = first_name
+            customer.last_name = last_name
+            customer.email = email
+            customer.save()
+            messages.success(request, 'Cập nhật thông tin tài khoản thành công!')
+            return redirect('profile')
+            
+    context = {
+        'items': items,
+        'order': order,
+        'customer': customer,
+        'categories': categories,
+    }
+    return render(request, "app/profile.html", context)

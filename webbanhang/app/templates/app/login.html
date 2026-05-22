@@ -20,8 +20,16 @@
           <h2>Đăng nhập</h2>
           <p>Bạn đã có tài khoản?</p>
 
+          {% if messages %}
+            <div class="alert alert-danger" style="color: #ff4d4d; font-size: 0.85rem; margin-bottom: 15px; text-align: left; padding: 10px; border-radius: 5px; background: rgba(255, 77, 77, 0.1);">
+              {% for message in messages %}
+                <p style="margin: 0;">• {{ message }}</p>
+              {% endfor %}
+            </div>
+          {% endif %}
+
           <div class="input-group">
-            <input type="text" name="username" placeholder="Username" />
+            <input type="text" name="username" placeholder="Username" value="{{ username|default:'' }}" />
           </div>
 
           <div class="input-group">

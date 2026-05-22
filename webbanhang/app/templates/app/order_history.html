@@ -9,13 +9,23 @@
         <div class="card-custom p-4 shadow-sm border-0" style="border-radius: 12px;">
           <div class="text-center mb-4">
             <div class="bg-primary text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-2" style="width: 60px; height: 60px; font-size: 24px;">
-              {{ customer.username|make_list|first|upper }}
+              {% if customer.first_name %}
+                {{ customer.first_name|make_list|first|upper }}
+              {% else %}
+                {{ customer.username|make_list|first|upper }}
+              {% endif %}
             </div>
-            <h5 class="fw-bold mb-0">{{ customer.username }}</h5>
+            <h5 class="fw-bold mb-0">
+              {% if customer.first_name or customer.last_name %}
+                {{ customer.first_name }} {{ customer.last_name }}
+              {% else %}
+                {{ customer.username }}
+              {% endif %}
+            </h5>
             <p class="text-muted small">{{ customer.email }}</p>
           </div>
           <div class="list-group list-group-flush" style="font-size: 15px;">
-            <a href="#" class="list-group-item list-group-item-action py-3 border-0"><i class="fas fa-user text-muted me-2"></i>Thông tin tài khoản</a>
+            <a href="{% url 'profile' %}" class="list-group-item list-group-item-action py-3 border-0"><i class="fas fa-user text-muted me-2"></i>Thông tin tài khoản</a>
             <a href="{% url 'order_history' %}" class="list-group-item list-group-item-action py-3 border-0 active fw-bold" style="background-color: #f0f4f8; color: #0d6efd; border-radius: 8px;"><i class="fas fa-box text-primary me-2"></i>Lịch sử đơn hàng</a>
             <a href="{% url 'logout' %}" class="list-group-item list-group-item-action py-3 border-0 text-danger"><i class="fas fa-sign-out-alt me-2"></i>Đăng xuất</a>
           </div>
