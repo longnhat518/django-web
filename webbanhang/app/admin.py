@@ -33,7 +33,9 @@ class OrderAdmin(admin.ModelAdmin):
 
     def colored_status(self, obj):
         from django.utils.html import format_html
-        if obj.status == 'chuẩn bị hàng':
+        if obj.status == 'chờ xác nhận':
+            color = '#6f42c1' # purple
+        elif obj.status == 'chuẩn bị hàng':
             color = '#f0ad4e' # orange
         elif obj.status == 'đang giao':
             color = '#0dcaf0' # blue

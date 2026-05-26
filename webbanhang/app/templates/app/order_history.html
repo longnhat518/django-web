@@ -54,7 +54,9 @@
                 </p>
               </div>
               <div class="mt-2 mt-md-0">
-                {% if order.status == 'chuẩn bị hàng' %}
+                {% if order.status == 'chờ xác nhận' %}
+                  <span class="badge text-white px-3 py-2" style="border-radius: 20px; background-color: #6f42c1 !important;"><i class="fas fa-hourglass-half me-1"></i> Chờ xác nhận</span>
+                {% elif order.status == 'chuẩn bị hàng' %}
                   <span class="badge bg-warning text-dark px-3 py-2" style="border-radius: 20px;"><i class="fas fa-box-open me-1"></i> Đang chuẩn bị</span>
                 {% elif order.status == 'đang giao' %}
                   <span class="badge bg-info text-white px-3 py-2" style="border-radius: 20px;"><i class="fas fa-truck me-1"></i> Đang giao</span>

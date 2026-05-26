@@ -137,6 +137,7 @@ def auto_delete_file_on_delete(sender, instance, **kwargs):
 
 class Order(models.Model):
     STATUS_CHOICES = (
+        ('chờ xác nhận', 'Chờ xác nhận'),
         ('chuẩn bị hàng', 'Chuẩn bị hàng'),
         ('đang giao', 'Đang giao'),
         ('đã giao', 'Đã giao'),
@@ -145,7 +146,7 @@ class Order(models.Model):
     date_ordered = models.DateTimeField(auto_now_add=True)
     complete = models.BooleanField(default=False, blank=True)
     transaction_id = models.CharField(max_length=100, null=True)
-    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='chuẩn bị hàng', verbose_name='Trạng thái đơn hàng')
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='chờ xác nhận', verbose_name='Trạng thái đơn hàng')
     payment_method = models.CharField(max_length=50, null=True, blank=True, verbose_name='Phương thức thanh toán')
 
     def __str__(self):

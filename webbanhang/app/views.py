@@ -405,6 +405,10 @@ def process_order(request):
         transaction_id = int(datetime.datetime.now().timestamp())
         data = json.loads(request.body)
         
+        # Phone validation (required)
+        if not data.get('form', {}).get('phone', '').strip():
+            return JsonResponse({'error': 'Số điện thoại nhận hàng là bắt buộc!'}, status=400)
+        
         customer = None
         if request.user.is_authenticated:
             customer = request.user
@@ -429,7 +433,7 @@ def process_order(request):
         payment_method = data.get('pay', 'cod')
         order.payment_method = payment_method
         if payment_method == 'cod':
-            order.status = 'chuẩn bị hàng'
+            order.status = 'chờ xác nhận'
             order.complete = True
         
         order.save()
@@ -443,6 +447,13 @@ def process_order(request):
         )
         
         if payment_method == 'transfer':
+            # Check if PayOS is configured, fallback to manual bank transfer if empty
+            if not getattr(settings, 'PAYOS_CLIENT_ID', '') or not getattr(settings, 'PAYOS_API_KEY', '') or not getattr(settings, 'PAYOS_CHECKSUM_KEY', ''):
+                order.status = 'chờ xác nhận'
+                order.complete = True
+                order.save()
+                return JsonResponse({'checkoutUrl': reverse('payment_success') + f'?payment_method=transfer&order_id={order.id}'})
+
             # Initialize PayOS
             try:
                 client = PayOS(
@@ -478,7 +489,7 @@ def process_order(request):
                 return JsonResponse({'error': str(e)}, status=400)
                 
         # For COD and others
-        return JsonResponse({'checkoutUrl': reverse('payment_success')})
+        return JsonResponse({'checkoutUrl': reverse('payment_success') + f'?payment_method={payment_method}&order_id={order.id}'})
     return JsonResponse({'error': 'Invalid request'}, status=400)
 
 def payment_success(request):
@@ -501,8 +512,31 @@ def payment_success(request):
         # Nếu guest, xóa giỏ hàng từ cookie
         # Xóa giỏ hàng trên trình duyệt bằng cách trả về một response yêu cầu xóa cookie
         pass
+    
+    order_id = request.GET.get('order_id', '')
+    payment_method = request.GET.get('payment_method', '')
+    
+    order_total = 0
+    half_total = 0
+    if order_id:
+        try:
+            order_obj = Order.objects.get(id=order_id)
+            order_total = order_obj.get_cart_total
+            half_total = order_total * 0.5
+        except Order.DoesNotExist:
+            pass
+            
+    format_order_total = "{:,.0f}".format(order_total).replace(',', '.') + '₫'
+    format_half_total = "{:,.0f}".format(half_total).replace(',', '.') + '₫'
+    
     categories = Category.objects.filter(is_sub=False)
-    context = {'customer': customer, 'categories': categories}
+    context = {
+        'customer': customer,
+        'categories': categories,
+        'payment_method': payment_method,
+        'order_total': format_order_total,
+        'half_total': format_half_total
+    }
     response = render(request, "app/payment_success.html", context)
     if not request.user.is_authenticated:
         response.delete_cookie('cart')
