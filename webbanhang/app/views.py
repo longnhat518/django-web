@@ -1,9 +1,10 @@
-from .models import Product, Order, OrderItem, Category, Banner, News, ShippingAddress
+from .models import Product, Order, OrderItem, Category, Banner, News, ShippingAddress, CustomerProfile, ProductVariant, Review, Wishlist
 from itertools import product
 from .utils import cookieCart
 from .forms import CreateUserForm
 from django.shortcuts import render, redirect
-from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth import authenticate, login, logout, update_session_auth_hash
+from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib import messages
 from django.http import HttpResponse, JsonResponse
 from django.db.models import Q
@@ -84,21 +85,130 @@ def updateItem(request):
     data = json.loads(request.body)
     productId = data['productId']
     action = data['action']
-    quantity = data.get('quantity', 1)
+    quantity = int(data.get('quantity', 1))
+    variantId = data.get('variantId')
+    
     customer = request.user
-    product = Product.objects.get(id = productId)
+    product = Product.objects.get(id=productId)
+    
+    variant = None
+    if variantId:
+        try:
+            variant = ProductVariant.objects.get(id=variantId)
+        except ProductVariant.DoesNotExist:
+            pass
+            
     order, created = Order.objects.get_or_create(customer=customer, complete=False)
-    orderItem, created = OrderItem.objects.get_or_create(order=order, product=product)
+    orderItem, created = OrderItem.objects.get_or_create(order=order, product=product, variant=variant)
+    
     if action == 'add':
         orderItem.quantity += quantity
     elif action == 'remove':
         orderItem.quantity -= quantity
     elif action == 'delete':
         orderItem.quantity = 0
+        
     orderItem.save()
     if orderItem.quantity <= 0:
         orderItem.delete()
-    return JsonResponse("Item was added",safe=False)
+        
+    # Get updated cart total and items
+    cart_items_count = order.get_cart_items
+    cart_total = order.format_get_cart_total
+    
+    items_list = []
+    for item in order.orderitem_set.all():
+        variant_title = ""
+        if item.variant:
+            variant_title = f"Phân loại: {item.variant.color or ''}"
+            if item.variant.color and item.variant.size:
+                variant_title += f" - {item.variant.size}"
+            elif item.variant.size:
+                variant_title = f"Phân loại: {item.variant.size}"
+                
+        items_list.append({
+            'product_id': item.product.id,
+            'product_name': item.product.name,
+            'product_image': item.product.imageURL,
+            'product_price': item.product.format_price,
+            'product_old_price': item.product.format_old_price if item.product.old_price else "",
+            'quantity': item.quantity,
+            'variant_title': variant_title,
+            'variant_id': item.variant.id if item.variant else None,
+            'total': item.format_get_total
+        })
+        
+    return JsonResponse({
+        'status': 'success',
+        'cart_items_count': cart_items_count,
+        'cart_total': cart_total,
+        'items': items_list
+    })
+
+def get_cart_data(request):
+    if request.user.is_authenticated:
+        customer = request.user
+        order, created = Order.objects.get_or_create(customer=customer, complete=False)
+        items = order.orderitem_set.all()
+        cart_items_count = order.get_cart_items
+        cart_total = order.format_get_cart_total
+        
+        items_list = []
+        for item in items:
+            variant_title = ""
+            if item.variant:
+                variant_title = f"Phân loại: {item.variant.color or ''}"
+                if item.variant.color and item.variant.size:
+                    variant_title += f" - {item.variant.size}"
+                elif item.variant.size:
+                    variant_title = f"Phân loại: {item.variant.size}"
+            
+            items_list.append({
+                'product_id': item.product.id,
+                'product_name': item.product.name,
+                'product_image': item.product.imageURL,
+                'product_price': item.product.format_price,
+                'product_old_price': item.product.format_old_price if item.product.old_price else "",
+                'quantity': item.quantity,
+                'variant_title': variant_title,
+                'variant_id': item.variant.id if item.variant else None,
+                'total': item.format_get_total
+            })
+    else:
+        cookieData = cookieCart(request)
+        cart_items_count = cookieData['cartItems']
+        cart_total = cookieData['order']['format_get_cart_total']
+        
+        items_list = []
+        for item in cookieData['items']:
+            variant_title = ""
+            if item.get('variant'):
+                variant = item['variant']
+                variant_title = f"Phân loại: {variant.color or ''}"
+                if variant.color and variant.size:
+                    variant_title += f" - {variant.size}"
+                elif variant.size:
+                    variant_title = f"Phân loại: {variant.size}"
+                    
+            items_list.append({
+                'product_id': item['product']['id'],
+                'product_name': item['product']['name'],
+                'product_image': item['product']['imageURL'],
+                'product_price': item['product']['format_price'],
+                'product_old_price': item['product']['format_old_price'] or "",
+                'quantity': item['quantity'],
+                'variant_title': variant_title,
+                'variant_id': item['variant'].id if item.get('variant') else None,
+                'total': item['format_get_total']
+            })
+            
+    return JsonResponse({
+        'status': 'success',
+        'cart_items_count': cart_items_count,
+        'cart_total': cart_total,
+        'items': items_list
+    })
+
 
 def register(request):
     form = CreateUserForm()
@@ -173,10 +283,12 @@ def category(request):
 
 def detail(request, slug):
     customer = None
+    in_wishlist = False
     if request.user.is_authenticated:
         customer = request.user
         order, created = Order.objects.get_or_create(customer=customer, complete=False)
         items = order.orderitem_set.all()
+        in_wishlist = Wishlist.objects.filter(user=customer, product__slug=slug).exists()
     else:
         cookieData = cookieCart(request)
         items = cookieData['items']
@@ -184,13 +296,22 @@ def detail(request, slug):
     
     product = Product.objects.get(slug=slug)
     categories = Category.objects.filter(is_sub=False)
+    reviews = product.reviews.all().order_by('-date_added')
+    variants = product.variants.all()
+    colors = product.variants.exclude(color__isnull=True).exclude(color='').values_list('color', flat=True).distinct()
+    sizes = product.variants.exclude(size__isnull=True).exclude(size='').values_list('size', flat=True).distinct()
     
     context = {
         'product': product,
         'categories': categories,
         'items': items,
         'order': order,
-        'customer': customer
+        'customer': customer,
+        'reviews': reviews,
+        'variants': variants,
+        'colors': colors,
+        'sizes': sizes,
+        'in_wishlist': in_wishlist,
     }
     return render(request, "app/detail.html", context)
 
@@ -589,25 +710,191 @@ def profile(request):
     items = order.orderitem_set.all()
     categories = Category.objects.filter(is_sub=False)
     
+    profile_obj, created = CustomerProfile.objects.get_or_create(user=customer)
+    addresses = ShippingAddress.objects.filter(customer=customer).order_by('-date_added')
+    
+    password_form = PasswordChangeForm(request.user)
+    active_tab = request.GET.get('tab', 'profile')
+    
     if request.method == 'POST':
-        first_name = request.POST.get('first_name', '').strip()
-        last_name = request.POST.get('last_name', '').strip()
-        email = request.POST.get('email', '').strip()
-        
-        if not email:
-            messages.error(request, 'Email không được để trống.')
+        action = request.POST.get('action', '')
+        if action == 'change_password':
+            active_tab = 'password'
+            password_form = PasswordChangeForm(request.user, request.POST)
+            if password_form.is_valid():
+                user = password_form.save()
+                update_session_auth_hash(request, user)
+                messages.success(request, 'Đổi mật khẩu thành công!')
+                return redirect('/profile/?tab=password')
+            else:
+                for field in password_form:
+                    for error in field.errors:
+                        messages.error(request, f"{field.label}: {error}")
+                for error in password_form.non_field_errors():
+                    messages.error(request, error)
         else:
-            customer.first_name = first_name
-            customer.last_name = last_name
-            customer.email = email
-            customer.save()
-            messages.success(request, 'Cập nhật thông tin tài khoản thành công!')
-            return redirect('profile')
+            active_tab = 'profile'
+            first_name = request.POST.get('first_name', '').strip()
+            last_name = request.POST.get('last_name', '').strip()
+            email = request.POST.get('email', '').strip()
+            phone = request.POST.get('phone', '').strip()
+            avatar = request.FILES.get('avatar')
             
+            if not email:
+                messages.error(request, 'Email không được để trống.')
+            else:
+                customer.first_name = first_name
+                customer.last_name = last_name
+                customer.email = email
+                customer.save()
+                
+                profile_obj.phone = phone
+                if avatar:
+                    # Clean up old file
+                    if profile_obj.avatar:
+                        try:
+                            if os.path.exists(profile_obj.avatar.path):
+                                os.remove(profile_obj.avatar.path)
+                        except Exception as e:
+                            print("Lỗi xóa avatar cũ:", str(e))
+                    profile_obj.avatar = avatar
+                profile_obj.save()
+                messages.success(request, 'Cập nhật thông tin tài khoản thành công!')
+                return redirect('profile')
+                
+    context = {
+        'items': items,
+        'order': order,
+        'customer': customer,
+        'profile': profile_obj,
+        'addresses': addresses,
+        'categories': categories,
+        'password_form': password_form,
+        'active_tab': active_tab,
+    }
+    return render(request, "app/profile.html", context)
+
+def add_review(request, slug):
+    if request.method == "POST":
+        is_ajax = request.headers.get('x-requested-with') == 'XMLHttpRequest' or request.content_type == 'application/json'
+        
+        if not request.user.is_authenticated:
+            if is_ajax:
+                return JsonResponse({'status': 'login_required', 'message': 'Bạn cần đăng nhập để gửi đánh giá.'}, status=401)
+            messages.error(request, "Bạn cần đăng nhập để gửi đánh giá.")
+            return redirect('login')
+        
+        try:
+            product = Product.objects.get(slug=slug)
+            
+            # Đọc tham số dựa trên Content-Type
+            if request.content_type == 'application/json':
+                data = json.loads(request.body)
+                rating = int(data.get('rating', 5))
+                comment = data.get('comment', '').strip()
+            else:
+                rating = int(request.POST.get('rating', 5))
+                comment = request.POST.get('comment', '').strip()
+            
+            if rating < 1 or rating > 5:
+                rating = 5
+                
+            if not comment:
+                if is_ajax:
+                    return JsonResponse({'status': 'error', 'message': 'Bình luận không được để trống.'}, status=400)
+                messages.error(request, "Bình luận không được để trống.")
+            else:
+                review = Review.objects.create(
+                    product=product,
+                    user=request.user,
+                    rating=rating,
+                    comment=comment
+                )
+                
+                if is_ajax:
+                    stars_full = len(product.get_rating_stars['full'])
+                    stars_half = len(product.get_rating_stars['half'])
+                    stars_empty = len(product.get_rating_stars['empty'])
+                    
+                    return JsonResponse({
+                        'status': 'success',
+                        'message': 'Cảm ơn bạn đã gửi đánh giá!',
+                        'review': {
+                            'username': review.user.username,
+                            'rating': review.rating,
+                            'comment': review.comment,
+                            'date_added': review.date_added.strftime("%d/%m/%Y %H:%M")
+                        },
+                        'average_rating': product.get_average_rating,
+                        'review_count': product.get_review_count,
+                        'rating_stars': {
+                            'full': stars_full,
+                            'half': stars_half,
+                            'empty': stars_empty
+                        }
+                    })
+                messages.success(request, "Cảm ơn bạn đã gửi đánh giá!")
+        except Product.DoesNotExist:
+            if is_ajax:
+                return JsonResponse({'status': 'error', 'message': 'Sản phẩm không tồn tại.'}, status=404)
+            messages.error(request, "Sản phẩm không tồn tại.")
+        except Exception as e:
+            if is_ajax:
+                return JsonResponse({'status': 'error', 'message': str(e)}, status=500)
+            messages.error(request, f"Lỗi: {str(e)}")
+            
+    if request.headers.get('x-requested-with') == 'XMLHttpRequest' or request.content_type == 'application/json':
+        return JsonResponse({'status': 'error', 'message': 'Yêu cầu không hợp lệ.'}, status=400)
+    return redirect('detail', slug=slug)
+
+def wishlist(request):
+    customer = None
+    if request.user.is_authenticated:
+        customer = request.user
+        order, created = Order.objects.get_or_create(customer=customer, complete=False)
+        items = order.orderitem_set.all()
+        wishlisted_items = Wishlist.objects.filter(user=customer).select_related('product')
+    else:
+        return redirect('login')
+        
+    categories = Category.objects.filter(is_sub=False)
+    
     context = {
         'items': items,
         'order': order,
         'customer': customer,
         'categories': categories,
+        'wishlist': wishlisted_items
     }
-    return render(request, "app/profile.html", context)
+    return render(request, "app/wishlist.html", context)
+
+def toggle_wishlist(request):
+    if not request.user.is_authenticated:
+        return JsonResponse({'status': 'login_required', 'message': 'Vui lòng đăng nhập để thực hiện.'}, status=401)
+        
+    if request.method == "POST":
+        try:
+            data = json.loads(request.body)
+            product_id = data.get('productId')
+            product = Product.objects.get(id=product_id)
+            
+            wishlist_item, created = Wishlist.objects.get_or_create(user=request.user, product=product)
+            
+            if not created:
+                wishlist_item.delete()
+                action = 'removed'
+                message = 'Đã xóa khỏi danh sách yêu thích.'
+            else:
+                action = 'added'
+                message = 'Đã thêm vào danh sách yêu thích.'
+                
+            wishlist_count = Wishlist.objects.filter(user=request.user).count()
+            return JsonResponse({'status': 'success', 'action': action, 'message': message, 'count': wishlist_count})
+        except Product.DoesNotExist:
+            return JsonResponse({'status': 'error', 'message': 'Sản phẩm không tồn tại.'}, status=400)
+        except Exception as e:
+            return JsonResponse({'status': 'error', 'message': str(e)}, status=500)
+            
+    return JsonResponse({'status': 'error', 'message': 'Invalid request method.'}, status=400)
+
+

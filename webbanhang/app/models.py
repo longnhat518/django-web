@@ -2,7 +2,7 @@ import os
 import uuid
 from django.db import models
 from django.contrib.auth.models import User
-from django.db.models.signals import post_delete
+from django.db.models.signals import post_delete, post_save
 from django.dispatch import receiver
 from django.utils.text import slugify
 from tinymce.models import HTMLField
@@ -17,6 +17,45 @@ def banner_upload_path(instance, filename):
     ext = filename.split('.')[-1]
     filename = f"{uuid.uuid4()}.{ext}"
     return f"app/static/app/images/banners/{filename}"
+
+def avatar_upload_path(instance, filename):
+    ext = filename.split('.')[-1]
+    filename = f"{uuid.uuid4()}.{ext}"
+    return f"app/static/app/images/avatars/{filename}"
+
+class CustomerProfile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    phone = models.CharField(max_length=20, null=True, blank=True, verbose_name="Số điện thoại")
+    avatar = models.ImageField(upload_to=avatar_upload_path, null=True, blank=True, verbose_name="Ảnh đại diện")
+
+    def __str__(self):
+        return self.user.username
+        
+    @property
+    def avatarURL(self):
+        try:
+            url = self.avatar.url
+            url = url.replace('\\', '/')
+            if '/app/static/' in url:
+                url = url.replace('/app/static/', '/static/')
+            elif url.startswith('app/static/'):
+                url = url.replace('app/static/', '/static/')
+        except:
+            url = ''
+        return url
+
+@receiver(post_save, sender=User)
+def create_user_profile(sender, instance, created, **kwargs):
+    if created:
+        CustomerProfile.objects.create(user=instance)
+
+@receiver(post_save, sender=User)
+def save_user_profile(sender, instance, **kwargs):
+    try:
+        instance.customerprofile.save()
+    except:
+        pass
+
 
 class Category(models.Model):
     is_sub = models.BooleanField(default=False)
@@ -108,6 +147,30 @@ class Product(models.Model):
             return images[1].imageURL
         return self.imageURL
 
+    @property
+    def get_average_rating(self):
+        reviews = self.reviews.all()
+        if reviews.exists():
+            total = sum([r.rating for r in reviews])
+            return round(total / reviews.count(), 1)
+        return 0.0
+
+    @property
+    def get_review_count(self):
+        return self.reviews.count()
+        
+    @property
+    def get_rating_stars(self):
+        avg = self.get_average_rating
+        full_stars = int(avg)
+        half_star = 1 if (avg - full_stars) >= 0.25 else 0
+        empty_stars = 5 - full_stars - half_star
+        return {
+            'full': range(full_stars),
+            'half': range(half_star),
+            'empty': range(empty_stars)
+        }
+
 class ProductImage(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='images')
     image = models.ImageField(upload_to=image_upload_path, null=True, blank=True)
@@ -182,16 +245,25 @@ class Order(models.Model):
     
 class OrderItem(models.Model):
     product = models.ForeignKey(Product, on_delete=models.SET_NULL, null=True, blank=True)
+    variant = models.ForeignKey('ProductVariant', on_delete=models.SET_NULL, null=True, blank=True)
     order = models.ForeignKey(Order, on_delete=models.SET_NULL, null=True, blank=True)
     quantity = models.IntegerField(default=0, null=True, blank=True)
     date_added = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return self.product.name if self.product else "OrderItem"
+        name = self.product.name if self.product else "OrderItem"
+        if self.variant:
+            attrs = []
+            if self.variant.color: attrs.append(self.variant.color)
+            if self.variant.size: attrs.append(self.variant.size)
+            if attrs:
+                name += f" ({' - '.join(attrs)})"
+        return name
 
     @property
     def get_total(self):
-        total = self.product.price * self.quantity
+        price = self.variant.get_price if self.variant else self.product.price
+        total = price * self.quantity
         return total
 
     @property
@@ -204,7 +276,9 @@ class OrderItem(models.Model):
     @property
     def sale_after_discount(self):
         try:
-            sale_after_discount = (self.product.old_price * self.quantity) - (self.product.price * self.quantity)
+            price = self.variant.get_price if self.variant else self.product.price
+            old_price = self.product.old_price if self.product.old_price else price
+            sale_after_discount = (old_price * self.quantity) - (price * self.quantity)
             return "{:,.0f}".format(sale_after_discount).replace(",", ".") + "₫"
         except:
             return '0₫'
@@ -314,3 +388,55 @@ def auto_delete_news_image_on_delete(sender, instance, **kwargs):
     if instance.image:
         if os.path.isfile(instance.image.path):
             os.remove(instance.image.path)
+
+class ProductVariant(models.Model):
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='variants')
+    color = models.CharField(max_length=50, null=True, blank=True, verbose_name="Màu sắc")
+    size = models.CharField(max_length=50, null=True, blank=True, verbose_name="Kích thước")
+    price = models.FloatField(null=True, blank=True, verbose_name="Giá bán riêng (nếu khác giá gốc)")
+    quantity = models.IntegerField(default=0, verbose_name="Số lượng tồn kho")
+
+    def __str__(self):
+        attrs = []
+        if self.color: attrs.append(f"Màu: {self.color}")
+        if self.size: attrs.append(f"Size: {self.size}")
+        desc = " - ".join(attrs) if attrs else "Mặc định"
+        return f"{self.product.name} ({desc})"
+
+    @property
+    def get_price(self):
+        if self.price is not None:
+            return self.price
+        return self.product.price
+
+    @property
+    def format_price(self):
+        try:
+            return "{:,.0f}".format(self.get_price).replace(',', '.') + '₫'
+        except:
+            return '0₫'
+
+class Review(models.Model):
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='reviews')
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    rating = models.IntegerField(default=5, verbose_name="Đánh giá (1-5 sao)")
+    comment = models.TextField(verbose_name="Bình luận")
+    date_added = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['-date_added']
+
+    def __str__(self):
+        return f"{self.user.username} - {self.product.name} ({self.rating} sao)"
+
+class Wishlist(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='wishlist')
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='wishlisted_by')
+    date_added = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ('user', 'product')
+        ordering = ['-date_added']
+
+    def __str__(self):
+        return f"{self.user.username} thích {self.product.name}"

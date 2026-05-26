@@ -1,6 +1,7 @@
 from django.contrib import admin
 from django.utils.html import mark_safe
-from .models import Product, Category, ProductImage, Order, OrderItem, ShippingAddress, Banner, News
+from .models import Product, Category, ProductImage, Order, OrderItem, ShippingAddress, Banner, News, CustomerProfile, ProductVariant, Review, Wishlist
+
 
 
 class CategoryAdmin(admin.ModelAdmin):
@@ -12,8 +13,12 @@ class ProductImageInline(admin.TabularInline):
     model = ProductImage
     extra = 5  # Hiển thị sẵn 5 ô trống để upload 5 ảnh liền lúc
 
+class ProductVariantInline(admin.TabularInline):
+    model = ProductVariant
+    extra = 2
+
 class ProductAdmin(admin.ModelAdmin):
-    inlines = [ProductImageInline]
+    inlines = [ProductImageInline, ProductVariantInline]
     list_display = ('name', 'price', 'old_price', 'is_featured', 'is_on_sale', 'digital', 'sold_count', 'quantity')
     list_filter = ('is_featured', 'is_on_sale', 'digital')
     search_fields = ('name',)
@@ -106,6 +111,9 @@ class NewsAdmin(admin.ModelAdmin):
     image_preview.short_description = "Ảnh đại diện"
 
 admin.site.register(News, NewsAdmin)
+admin.site.register(CustomerProfile)
+admin.site.register(Review)
+admin.site.register(Wishlist)
 
 
 

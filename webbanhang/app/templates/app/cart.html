@@ -21,24 +21,38 @@
                         <img src="{{item.product.imageURL}}" width="80" class="me-3" />
                         <div class="flex-grow-1">
                             <h6>{{item.product.name}}</h6>
+                            {% if item.variant %}
+                            <div class="text-muted small mb-1">Phân loại: {{ item.variant.color|default:"" }} {% if item.variant.color and item.variant.size %}-{% endif %} {{ item.variant.size|default:"" }}</div>
+                            {% elif item.variant_title %}
+                            <!-- Đối với cookie cart, nếu có title phụ -->
+                            <div class="text-muted small mb-1">{{ item.variant_title }}</div>
+                            {% endif %}
                             <div>
                                 <span class="text-danger fw-bold">{{item.product.format_price}}</span>
                                 <span
                                     class="text-muted text-decoration-line-through ms-2">{{item.product.format_old_price}}</span>
                             </div>
-                            <!-- <small class="text-muted">{{item.product.description}}</small> -->
 
                             <div class="mt-2 d-flex align-items-center">
-                                <button class="btn btn-sm btn-outline-secondary btn-minus update-cart" data-product="{{item.product.id}}" data-action="remove">-</button>
+                                <button class="btn btn-sm btn-outline-secondary btn-minus update-cart" 
+                                        data-product="{{item.product.id}}" 
+                                        data-variant="{% if item.variant %}{{item.variant.id}}{% elif item.variant_id %}{{item.variant_id}}{% endif %}" 
+                                        data-action="remove">-</button>
                                 <input type="text" value="{{item.quantity}}"
                                     class="form-control form-control-sm text-center mx-2 quantity"
-                                    style="width: 60px" />
-                                <button class="btn btn-sm btn-outline-secondary btn-plus update-cart" data-product="{{item.product.id}}" data-action="add">+</button>
+                                    style="width: 60px" readonly />
+                                <button class="btn btn-sm btn-outline-secondary btn-plus update-cart" 
+                                        data-product="{{item.product.id}}" 
+                                        data-variant="{% if item.variant %}{{item.variant.id}}{% elif item.variant_id %}{{item.variant_id}}{% endif %}" 
+                                        data-action="add">+</button>
                             </div>
                         </div>
                         <div class="text-end">
                             <div class="fw-bold">{{item.format_get_total}}</div>
-                            <button class="btn btn-sm text-danger update-cart" data-product="{{item.product.id}}" data-action="delete">×</button>
+                            <button class="btn btn-sm text-danger update-cart" 
+                                    data-product="{{item.product.id}}" 
+                                    data-variant="{% if item.variant %}{{item.variant.id}}{% elif item.variant_id %}{{item.variant_id}}{% endif %}" 
+                                    data-action="delete">×</button>
                         </div>
                     </div>
                     {%endfor%}

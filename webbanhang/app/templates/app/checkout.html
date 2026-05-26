@@ -158,6 +158,9 @@
                                 <h6 class="mb-1 text-dark"
                                     style="font-size: 0.95rem; font-weight: 600; line-height: 1.4;">
                                     {{item.product.name}}</h6>
+                                {% if item.variant %}
+                                <div class="text-muted small mb-1" style="font-size: 0.8rem;">Phân loại: {{ item.variant.color|default:"" }} {% if item.variant.color and item.variant.size %}-{% endif %} {{ item.variant.size|default:"" }}</div>
+                                {% endif %}
 
                                 <div class="d-flex justify-content-between align-items-end mt-2">
                                     <div class="price-wrap">
@@ -171,13 +174,17 @@
 
                                     <div class="d-flex align-items-center bg-light rounded px-1 py-1 border shadow-sm">
                                         <button type="button" class="qty-btn border-0 bg-transparent update-cart"
-                                            data-product="{{item.product.id}}" data-action="remove">
+                                            data-product="{{item.product.id}}" 
+                                            data-variant="{% if item.variant %}{{item.variant.id}}{% endif %}"
+                                            data-action="remove">
                                             <i class="fas fa-minus" style="font-size: 10px;"></i>
                                         </button>
                                         <input type="text" value="{{item.quantity}}" class="qty-input bg-transparent"
                                             readonly>
                                         <button type="button" class="qty-btn border-0 bg-transparent update-cart"
-                                            data-product="{{item.product.id}}" data-action="add">
+                                            data-product="{{item.product.id}}" 
+                                            data-variant="{% if item.variant %}{{item.variant.id}}{% endif %}"
+                                            data-action="add">
                                             <i class="fas fa-plus" style="font-size: 10px;"></i>
                                         </button>
                                     </div>

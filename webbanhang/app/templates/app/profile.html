@@ -9,11 +9,17 @@
                 <div class="card-custom p-4 shadow-sm border-0" style="border-radius: 12px; background-color: #ffffff;">
                     <div class="text-center mb-4">
                         <div class="bg-primary text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-2"
-                            style="width: 60px; height: 60px; font-size: 24px;">
-                            {% if customer.first_name %}
-                            {{ customer.first_name|make_list|first|upper }}
+                            style="width: 70px; height: 70px; font-size: 24px; overflow: hidden; border: 2px solid #dee2e6;">
+                            {% if profile.avatarURL %}
+                            <img src="{{ profile.avatarURL }}" style="width: 100%; height: 100%; object-fit: cover;" alt="Avatar">
                             {% else %}
-                            {{ customer.username|make_list|first|upper }}
+                                <span style="line-height: 70px;">
+                                    {% if customer.first_name %}
+                                    {{ customer.first_name|make_list|first|upper }}
+                                    {% else %}
+                                    {{ customer.username|make_list|first|upper }}
+                                    {% endif %}
+                                </span>
                             {% endif %}
                         </div>
                         <h5 class="fw-bold mb-0">
@@ -26,10 +32,20 @@
                         <p class="text-muted small mb-0">{{ customer.email }}</p>
                     </div>
                     <div class="list-group list-group-flush" style="font-size: 15px;">
-                        <a href="{% url 'profile' %}"
-                            class="list-group-item list-group-item-action py-3 border-0 active fw-bold"
-                            style="background-color: #f0f4f8; color: #0d6efd; border-radius: 8px;">
+                        <a href="?tab=profile"
+                            class="list-group-item list-group-item-action py-3 border-0 {% if active_tab == 'profile' %}active fw-bold{% endif %}"
+                            style="{% if active_tab == 'profile' %}background-color: #f0f4f8; color: #0d6efd; border-radius: 8px;{% endif %}">
                             <i class="fas fa-user text-primary me-2"></i>Thông tin tài khoản
+                        </a>
+                        <a href="?tab=password"
+                            class="list-group-item list-group-item-action py-3 border-0 {% if active_tab == 'password' %}active fw-bold{% endif %}"
+                            style="{% if active_tab == 'password' %}background-color: #f0f4f8; color: #0d6efd; border-radius: 8px;{% endif %}">
+                            <i class="fas fa-key text-primary me-2"></i>Đổi mật khẩu
+                        </a>
+                        <a href="?tab=address"
+                            class="list-group-item list-group-item-action py-3 border-0 {% if active_tab == 'address' %}active fw-bold{% endif %}"
+                            style="{% if active_tab == 'address' %}background-color: #f0f4f8; color: #0d6efd; border-radius: 8px;{% endif %}">
+                            <i class="fas fa-map-marker-alt text-primary me-2"></i>Sổ địa chỉ
                         </a>
                         <a href="{% url 'order_history' %}"
                             class="list-group-item list-group-item-action py-3 border-0">
@@ -46,22 +62,23 @@
             <!-- Main Content -->
             <div class="col-lg-9">
                 <div class="card-custom p-5 shadow-sm border-0" style="border-radius: 12px; background-color: #ffffff;">
-                    <h4 class="fw-bold mb-1">Thông tin cá nhân</h4>
-                    <p class="text-muted small mb-4">Quản lý và cập nhật thông tin tài khoản của bạn</p>
-
                     {% if messages %}
                     {% for message in messages %}
                     <div class="alert alert-{% if message.tags == 'error' %}danger{% else %}{{ message.tags }}{% endif %} alert-dismissible fade show border-0 shadow-sm mb-4"
                         role="alert" style="border-radius: 8px;">
-                        <i
-                            class="fas {% if message.tags == 'error' %}fa-exclamation-circle{% else %}fa-check-circle{% endif %} me-2"></i>
+                        <i class="fas {% if message.tags == 'error' %}fa-exclamation-circle{% else %}fa-check-circle{% endif %} me-2"></i>
                         {{ message }}
                         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                     </div>
                     {% endfor %}
                     {% endif %}
 
-                    <form action="{% url 'profile' %}" method="POST" class="needs-validation" novalidate>
+                    {% if active_tab == 'profile' %}
+                    <!-- Personal Info Tab -->
+                    <h4 class="fw-bold mb-1">Thông tin cá nhân</h4>
+                    <p class="text-muted small mb-4">Quản lý và cập nhật thông tin tài khoản của bạn</p>
+
+                    <form action="{% url 'profile' %}?tab=profile" method="POST" enctype="multipart/form-data" class="needs-validation" novalidate>
                         {% csrf_token %}
 
                         <div class="row g-4">
@@ -74,18 +91,14 @@
                                     <input type="text" class="form-control bg-light border-start-0 text-muted"
                                         value="{{ customer.username }}" readonly style="border-radius: 0 8px 8px 0;">
                                 </div>
-                                <div class="form-text small text-muted mt-1" style="font-size: 11px;">Tên đăng nhập
-                                    không thể thay đổi.
-                                </div>
+                                <div class="form-text small text-muted mt-1" style="font-size: 11px;">Tên đăng nhập không thể thay đổi.</div>
                             </div>
 
                             <!-- Email -->
                             <div class="col-md-6">
-                                <label class="form-label small text-muted fw-bold mb-1">Địa chỉ Email <span
-                                        class="text-danger">*</span></label>
+                                <label class="form-label small text-muted fw-bold mb-1">Địa chỉ Email <span class="text-danger">*</span></label>
                                 <div class="input-group">
-                                    <span class="input-group-text bg-white border-end-0"><i
-                                            class="fas fa-envelope text-muted"></i></span>
+                                    <span class="input-group-text bg-white border-end-0"><i class="fas fa-envelope text-muted"></i></span>
                                     <input type="email" name="email" class="form-control border-start-0"
                                         placeholder="example@domain.com" value="{{ customer.email }}" required
                                         style="border-radius: 0 8px 8px 0; outline: none;">
@@ -96,8 +109,7 @@
                             <div class="col-md-6">
                                 <label class="form-label small text-muted fw-bold mb-1">Họ (Last Name)</label>
                                 <div class="input-group">
-                                    <span class="input-group-text bg-white border-end-0"><i
-                                            class="fas fa-id-card text-muted"></i></span>
+                                    <span class="input-group-text bg-white border-end-0"><i class="fas fa-id-card text-muted"></i></span>
                                     <input type="text" name="last_name" class="form-control border-start-0"
                                         placeholder="Ví dụ: Nguyễn" value="{{ customer.last_name }}"
                                         style="border-radius: 0 8px 8px 0;">
@@ -108,12 +120,28 @@
                             <div class="col-md-6">
                                 <label class="form-label small text-muted fw-bold mb-1">Tên (First Name)</label>
                                 <div class="input-group">
-                                    <span class="input-group-text bg-white border-end-0"><i
-                                            class="fas fa-user text-muted"></i></span>
+                                    <span class="input-group-text bg-white border-end-0"><i class="fas fa-user text-muted"></i></span>
                                     <input type="text" name="first_name" class="form-control border-start-0"
                                         placeholder="Ví dụ: Văn An" value="{{ customer.first_name }}"
                                         style="border-radius: 0 8px 8px 0;">
                                 </div>
+                            </div>
+
+                            <!-- Phone -->
+                            <div class="col-md-6">
+                                <label class="form-label small text-muted fw-bold mb-1">Số điện thoại</label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-white border-end-0"><i class="fas fa-phone text-muted"></i></span>
+                                    <input type="text" name="phone" class="form-control border-start-0"
+                                        placeholder="Ví dụ: 0912345678" value="{{ profile.phone|default:'' }}"
+                                        style="border-radius: 0 8px 8px 0;">
+                                </div>
+                            </div>
+
+                            <!-- Avatar -->
+                            <div class="col-md-6">
+                                <label class="form-label small text-muted fw-bold mb-1">Ảnh đại diện</label>
+                                <input type="file" name="avatar" class="form-control" accept="image/*" style="border-radius: 8px;">
                             </div>
 
                             <!-- Submit button -->
@@ -125,6 +153,68 @@
                             </div>
                         </div>
                     </form>
+
+                    {% elif active_tab == 'password' %}
+                    <!-- Password Tab -->
+                    <h4 class="fw-bold mb-1">Đổi mật khẩu</h4>
+                    <p class="text-muted small mb-4">Thay đổi mật khẩu đăng nhập của bạn</p>
+
+                    <form action="{% url 'profile' %}?tab=password" method="POST" class="needs-validation" novalidate>
+                        {% csrf_token %}
+                        <input type="hidden" name="action" value="change_password">
+
+                        <div class="row g-4">
+                            <div class="col-md-12">
+                                <label class="form-label small text-muted fw-bold mb-1">Mật khẩu hiện tại <span class="text-danger">*</span></label>
+                                <input type="password" name="old_password" class="form-control" required style="border-radius: 8px;">
+                            </div>
+                            <div class="col-md-12">
+                                <label class="form-label small text-muted fw-bold mb-1">Mật khẩu mới <span class="text-danger">*</span></label>
+                                <input type="password" name="new_password1" class="form-control" required style="border-radius: 8px;">
+                            </div>
+                            <div class="col-md-12">
+                                <label class="form-label small text-muted fw-bold mb-1">Xác nhận mật khẩu mới <span class="text-danger">*</span></label>
+                                <input type="password" name="new_password2" class="form-control" required style="border-radius: 8px;">
+                            </div>
+                            <div class="col-12 mt-5">
+                                <button type="submit" class="btn btn-primary px-5 py-2.5 shadow-sm fw-bold border-0"
+                                    style="border-radius: 8px; background-color: #0d6efd; transition: all 0.2s ease;">
+                                    <i class="fas fa-key me-2"></i> Cập nhật mật khẩu
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+
+                    {% elif active_tab == 'address' %}
+                    <!-- Address Tab -->
+                    <h4 class="fw-bold mb-1">Sổ địa chỉ</h4>
+                    <p class="text-muted small mb-4">Danh sách các địa chỉ giao hàng bạn đã từng sử dụng để đặt đơn hàng</p>
+
+                    {% if addresses %}
+                    <div class="row g-4">
+                        {% for addr in addresses %}
+                        <div class="col-md-6">
+                            <div class="card p-3 shadow-sm border" style="border-radius: 12px; background-color: #ffffff;">
+                                <div class="d-flex justify-content-between align-items-center mb-3">
+                                    <span class="badge bg-light text-primary border border-primary-subtle px-3 py-2" style="font-size: 11px;">Địa chỉ #{{ forloop.counter }}</span>
+                                    <span class="text-muted small"><i class="far fa-calendar-alt me-1"></i>{{ addr.date_added|date:"d/m/Y" }}</span>
+                                </div>
+                                <p class="mb-2" style="font-size: 14px;"><i class="fas fa-phone-alt text-muted me-2"></i><strong>Số điện thoại:</strong> {{ addr.mobile }}</p>
+                                <p class="mb-2" style="font-size: 14px;"><i class="fas fa-map-marker-alt text-muted me-2"></i><strong>Địa chỉ:</strong> {{ addr.address }}</p>
+                                <p class="mb-0" style="font-size: 14px;"><i class="fas fa-city text-muted me-2"></i><strong>Thành phố/Tỉnh:</strong> {{ addr.city }}</p>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    <div class="text-center py-5 text-muted">
+                        <i class="fas fa-map-marked-alt fa-3x mb-3 text-muted" style="opacity: 0.5;"></i>
+                        <p class="mb-0">Bạn chưa sử dụng địa chỉ giao hàng nào.</p>
+                        <small class="text-muted">Địa chỉ của bạn sẽ tự động lưu tại đây sau khi bạn đặt hàng thành công.</small>
+                    </div>
+                    {% endif %}
+
+                    {% endif %}
                 </div>
             </div>
         </div>

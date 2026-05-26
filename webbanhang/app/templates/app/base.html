@@ -90,10 +90,24 @@
           {% else %}
           <a href="{% url 'login' %}" class="me-3" style="color: inherit; text-decoration: none;">Đăng nhập</a>
           {% endif %}
+          
+          {% if request.user.is_authenticated %}
+          <div class="wishlist-wrapper me-3 py-2 ms-2">
+            <a href="{% url 'wishlist' %}" class="text-decoration-none position-relative d-inline-block text-secondary" style="color: inherit;">
+              <i class="far fa-heart fs-5"></i>
+              <span id="wishlist-badge" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" 
+                    style="font-size: 0.6rem; padding: 0.25em 0.4em; {% if request.user.wishlist.count == 0 %}display: none;{% endif %}">
+                {{ request.user.wishlist.count }}
+              </span>
+            </a>
+          </div>
+          {% endif %}
+
           <div class="cart-wrapper ms-1 py-2">
             <a href="{% url 'cart' %}" id="cartBtn" class="text-decoration-none position-relative d-inline-block" style="color: inherit;">
               <i class="fas fa-shopping-cart fs-5"></i>
-              <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="font-size: 0.6rem; padding: 0.25em 0.4em;">
+              <span id="cart-badge" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" 
+                    style="font-size: 0.6rem; padding: 0.25em 0.4em; {% if order.get_cart_items == 0 or order.get_cart_items == None %}display: none;{% endif %}">
                 {{ order.get_cart_items|default:"0" }}
               </span>
             </a>
@@ -106,7 +120,12 @@
                   <img src="{{item.product.imageURL}}" class="border" style="width: 80px; height: 80px; object-fit: cover;">
                   <div class="flex-grow-1 ms-3">
                     <div class="fw-bold text-uppercase" style="font-size: 12px; color: #4a4a4a; line-height: 1.4;">{{item.product.name}}</div>
-                    <div class="text-uppercase text-muted" style="font-size: 11px; margin-top: 6px;">{{item.product.category_names|default:""}}</div>
+                    {% if item.variant %}
+                    <div class="text-uppercase text-danger fw-bold" style="font-size: 10px; margin-top: 2px;">
+                      Phân loại: {{item.variant.color|default:""}}{% if item.variant.color and item.variant.size %} - {% endif %}{{item.variant.size|default:""}}
+                    </div>
+                    {% endif %}
+                    <div class="text-uppercase text-muted" style="font-size: 11px; margin-top: 4px;">{{item.product.category_names|default:""}}</div>
                     
                     <div class="d-flex justify-content-between align-items-center mt-2">
                       <div class="d-flex align-items-center">
@@ -116,23 +135,29 @@
                         <span class="text-muted text-decoration-line-through" style="font-size: 11px;">{{item.product.format_old_price}}</span>
                         {% endif %}
                       </div>
-                      <button class="btn btn-sm btn-light p-0 border d-flex align-items-center justify-content-center fw-bold update-cart" data-product="{{item.product.id}}" data-action="delete" style="width: 20px; height: 20px; background: #eee; font-size: 12px; line-height: 12px;">
+                      <button class="btn btn-sm btn-light p-0 border d-flex align-items-center justify-content-center fw-bold update-cart" 
+                              data-product="{{item.product.id}}" 
+                              data-action="delete" 
+                              data-variant="{% if item.variant %}{{item.variant.id}}{% endif %}"
+                              style="width: 20px; height: 20px; background: #eee; font-size: 12px; line-height: 12px;">
                         &times;
                       </button>
                     </div>
                   </div>
                 </div>
+                {% empty %}
+                <div class="text-center py-4 text-muted empty-cart-msg">Giỏ hàng của bạn đang trống.</div>
                 {%endfor%}
               </div>
 
               <div class="cart-footer mt-2 p-0 pt-2">
                 <div class="d-flex justify-content-between align-items-center mb-3">
                   <span class="text-secondary text-uppercase" style="font-size: 13px;">Tổng tiền:</span>
-                  <strong style="color: #e65540; font-size: 18px;">{{order.format_get_cart_total}}</strong>
+                  <strong id="cart-total-amount" style="color: #e65540; font-size: 18px;">{{order.format_get_cart_total|default:"0₫"}}</strong>
                 </div>
                 <div class="d-flex gap-2">
-                  <button class="btn btn-secondary w-50" style="font-size: 13px; border-radius: 4px;"> <a class="text-decoration-none text-white" href="{% url 'cart' %}">XEM GIỎ HÀNG</a></button>
-                  <button class="btn btn-danger w-50" style="font-size: 13px; border-radius: 4px; background-color: #e65540; border-color: #e65540;"> <a class="text-decoration-none text-white" href="{% url 'checkout' %}">THANH TOÁN</a></button>
+                  <a class="btn btn-secondary w-50 d-flex align-items-center justify-content-center text-white" href="{% url 'cart' %}" style="font-size: 13px; border-radius: 4px; height: 38px;">XEM GIỎ HÀNG</a>
+                  <a class="btn btn-danger w-50 d-flex align-items-center justify-content-center text-white" href="{% url 'checkout' %}" style="font-size: 13px; border-radius: 4px; background-color: #e65540; border-color: #e65540; height: 38px;">THANH TOÁN</a>
                 </div>
               </div>
             </div>
@@ -338,6 +363,7 @@
     </script>
     <script src="{%static 'app/js/myscript.js'%}"></script>
     <script src="{%static 'app/js/cart.js'%}"></script>
+    <div id="toast-container" class="position-fixed bottom-0 end-0 p-3" style="z-index: 2000;"></div>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
   </body>
 </html>
