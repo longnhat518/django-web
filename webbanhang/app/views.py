@@ -409,13 +409,24 @@ def process_order(request):
         if not data.get('form', {}).get('phone', '').strip():
             return JsonResponse({'error': 'Số điện thoại nhận hàng là bắt buộc!'}, status=400)
         
+        # Check if cart is empty
         customer = None
         if request.user.is_authenticated:
             customer = request.user
             order, created = Order.objects.get_or_create(customer=customer, complete=False)
+            items = order.orderitem_set.all()
         else:
             cookieData = cookieCart(request)
             items = cookieData['items']
+            
+        if not items:
+            return JsonResponse({'error': 'Giỏ hàng của bạn đang trống! Không thể thực hiện đặt hàng.'}, status=400)
+            
+        # Re-get or create order object
+        if request.user.is_authenticated:
+            # order already retrieved/created above
+            pass
+        else:
             order = Order.objects.create(complete=False)
             for item in items:
                 try:

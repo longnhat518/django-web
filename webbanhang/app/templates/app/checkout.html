@@ -5,6 +5,7 @@
 
 <section class="py-5 checkout-section">
     <div class="container">
+        {% if items %}
         <div class="row g-4">
             <!-- Left: Form -->
             <div class="col-lg-7">
@@ -240,6 +241,20 @@
             </div>
             </form>
         </div>
+        {% else %}
+        <div class="text-center py-5">
+            <div class="card-custom p-5 mx-auto shadow-sm" style="max-width: 600px; border-radius: 12px;">
+                <div class="mb-4 text-warning">
+                    <i class="fas fa-shopping-cart" style="font-size: 80px; opacity: 0.8;"></i>
+                </div>
+                <h3 class="fw-bold mb-3 text-dark">Giỏ hàng của bạn đang trống!</h3>
+                <p class="text-muted mb-4">Bạn chưa có sản phẩm nào trong giỏ hàng để tiến hành thanh toán. Vui lòng quay lại trang cửa hàng chọn các sản phẩm bạn thích.</p>
+                <a href="{% url 'all_product' %}" class="btn btn-checkout px-4 py-3 d-inline-flex align-items-center gap-2" style="width: auto; border-radius: 8px; font-weight: 600;">
+                    <i class="fas fa-shopping-bag"></i> QUAY LẠI TRANG SẢN PHẨM
+                </a>
+            </div>
+        </div>
+        {% endif %}
     </div>
 </section>
 

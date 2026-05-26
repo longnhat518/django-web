@@ -1,93 +1,91 @@
-{% extends 'app/base.html' %} 
-{% load static %} 
+{% extends 'app/base.html' %}
+{% load static %}
 {% block cart_content %}
 
 <!-- Cart Page -->
 <section class="py-5 bg-light">
-  <div class="container">
-    <h2 class="text-center mb-4">Giỏ hàng của bạn</h2>
+    <div class="container">
+        {% if items %}
+        <h2 class="text-center mb-4">Giỏ hàng của bạn</h2>
 
-    <div class="row">
-      <!-- Left: Cart Items -->
-      <div class="col-md-8">
-        <div class="bg-white p-3 mb-3">
-          <p>
-            <strong>Có {{order.get_cart_items}} sản phẩm</strong> trong giỏ hàng
-          </p>
-          {% for item in items%}
-          <div
-            class="d-flex align-items-center border-bottom pb-3 cart-item mt-3"
-            data-price="{{item.product.price}}"
-          >
-            <img
-              src="{{item.product.imageURL}}"
-              width="80"
-              class="me-3"
-            />
-            <div class="flex-grow-1">
-              <h6>{{item.product.name}}</h6>
-              <div>
-                <span class="text-danger fw-bold">{{item.product.format_price}}</span>
-                <span class="text-muted text-decoration-line-through ms-2"
-                  >{{item.product.format_old_price}}</span
-                >
-              </div>
-              <small class="text-muted">{{item.product.description}}</small>
+        <div class="row">
+            <!-- Left: Cart Items -->
+            <div class="col-md-8">
+                <div class="bg-white p-3 mb-3">
+                    <p>
+                        <strong>Có {{order.get_cart_items}} sản phẩm</strong> trong giỏ hàng
+                    </p>
+                    {% for item in items%}
+                    <div class="d-flex align-items-center border-bottom pb-3 cart-item mt-3"
+                        data-price="{{item.product.price}}">
+                        <img src="{{item.product.imageURL}}" width="80" class="me-3" />
+                        <div class="flex-grow-1">
+                            <h6>{{item.product.name}}</h6>
+                            <div>
+                                <span class="text-danger fw-bold">{{item.product.format_price}}</span>
+                                <span
+                                    class="text-muted text-decoration-line-through ms-2">{{item.product.format_old_price}}</span>
+                            </div>
+                            <!-- <small class="text-muted">{{item.product.description}}</small> -->
 
-              <div class="mt-2 d-flex align-items-center">
-                <button class="btn btn-sm btn-outline-secondary btn-minus update-cart"
-                  data-product={{ item.product.id }}
-                  data-action ="remove">
-                  -
-                </button>
-                <input
-                  type="text"
-                  value="{{item.quantity}}"
-                  class="form-control form-control-sm text-center mx-2 quantity"
-                  style="width: 60px"
-                />
-                <button class="btn btn-sm btn-outline-secondary btn-plus update-cart"
-                  data-product={{ item.product.id }}
-                  data-action ="add">
-                  +
-                </button>
-              </div>
+                            <div class="mt-2 d-flex align-items-center">
+                                <button class="btn btn-sm btn-outline-secondary btn-minus update-cart" data-product="{{item.product.id}}" data-action="remove">-</button>
+                                <input type="text" value="{{item.quantity}}"
+                                    class="form-control form-control-sm text-center mx-2 quantity"
+                                    style="width: 60px" />
+                                <button class="btn btn-sm btn-outline-secondary btn-plus update-cart" data-product="{{item.product.id}}" data-action="add">+</button>
+                            </div>
+                        </div>
+                        <div class="text-end">
+                            <div class="fw-bold">{{item.format_get_total}}</div>
+                            <button class="btn btn-sm text-danger update-cart" data-product="{{item.product.id}}" data-action="delete">×</button>
+                        </div>
+                    </div>
+                    {%endfor%}
+                </div>
+
+                <div class="bg-white p-3">
+                    <label class="form-label">Ghi chú đơn hàng</label>
+                    <textarea class="form-control" rows="4"></textarea>
+                </div>
             </div>
-            <div class="text-end">
-              <div class="fw-bold">{{item.format_get_total}}</div>
-              <button class="btn btn-sm text-danger">×</button>
+
+            <!-- Right: Summary -->
+            <div class="col-md-4">
+                <div class="bg-white p-3">
+                    <h5>Thông tin đơn hàng</h5>
+                    <div class="d-flex justify-content-between mt-3">
+                        <span>Tổng tiền:</span>
+                        <strong class="text-danger" id="totalPrice"></strong>
+                    </div>
+                    <a href="{% url 'checkout' %}" class="btn btn-danger w-100 mt-3">THANH TOÁN</a>
+                </div>
+
+                <div class="mt-3 small text-muted">
+                    <p>✔ Không rủi ro. Đặt hàng trước, thanh toán sau</p>
+                    <p>✔ Giao hàng trong vòng 3 ngày</p>
+                    <p>✔ Bảo hành 2 năm</p>
+                    <p>✔ Chất lượng tiêu chuẩn quốc tế</p>
+                </div>
             </div>
-          </div>
-          {%endfor%}
         </div>
-
-        <div class="bg-white p-3">
-          <label class="form-label">Ghi chú đơn hàng</label>
-          <textarea class="form-control" rows="4"></textarea>
+        {% else %}
+        <div class="text-center py-5">
+            <div class="card-custom p-5 mx-auto shadow-sm" style="max-width: 600px; border-radius: 12px;">
+                <div class="mb-4 text-warning">
+                    <i class="fas fa-shopping-cart" style="font-size: 80px; opacity: 0.8;"></i>
+                </div>
+                <h3 class="fw-bold mb-3 text-dark">Giỏ hàng của bạn đang trống!</h3>
+                <p class="text-muted mb-4">Bạn chưa có sản phẩm nào trong giỏ hàng để tiến hành thanh toán. Vui lòng
+                    quay lại trang cửa hàng chọn các sản phẩm bạn thích.</p>
+                <a href="{% url 'all_product' %}"
+                    class="btn btn-checkout px-4 py-3 d-inline-flex align-items-center gap-2"
+                    style="width: auto; border-radius: 8px; font-weight: 600;">
+                    <i class="fas fa-shopping-bag"></i> QUAY LẠI TRANG SẢN PHẨM
+                </a>
+            </div>
         </div>
-      </div>
-
-      <!-- Right: Summary -->
-      <div class="col-md-4">
-        <div class="bg-white p-3">
-          <h5>Thông tin đơn hàng</h5>
-          <div class="d-flex justify-content-between mt-3">
-            <span>Tổng tiền:</span>
-            <strong class="text-danger" id="totalPrice"></strong>
-          </div>
-          <a href="{% url 'checkout' %}" class="btn btn-danger w-100 mt-3"
-            >THANH TOÁN</a
-          >
-        </div>
-
-        <div class="mt-3 small text-muted">
-          <p>✔ Không rủi ro. Đặt hàng trước, thanh toán sau</p>
-          <p>✔ Giao hàng trong vòng 3 ngày</p>
-          <p>✔ Bảo hành 2 năm</p>
-          <p>✔ Chất lượng tiêu chuẩn quốc tế</p>
-        </div>
-      </div>
+        {% endif %}
     </div>
-  </div>
 </section>
 {% endblock cart_content %}
