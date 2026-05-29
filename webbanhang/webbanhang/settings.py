@@ -143,3 +143,16 @@ TINYMCE_DEFAULT_CONFIG = {
 PAYOS_CLIENT_ID = ""
 PAYOS_API_KEY = ""
 PAYOS_CHECKSUM_KEY = ""
+
+# Email Configuration
+EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+EMAIL_HOST = "smtp.gmail.com"
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = "your_email@gmail.com"  # Điền email của bạn
+EMAIL_HOST_PASSWORD = "your_app_password"  # Điền mật khẩu ứng dụng
+DEFAULT_FROM_EMAIL = "Web Bán Hàng <your_email@gmail.com>"
+
+# Telegram Bot Configuration
+TELEGRAM_BOT_TOKEN = ""  # Điền token bot của bạn
+TELEGRAM_CHAT_ID = ""  # Điền ID nhóm hoặc ID cá nhân

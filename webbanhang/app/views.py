@@ -1,6 +1,6 @@
 from .models import Product, Order, OrderItem, Category, Banner, News, ShippingAddress, CustomerProfile, ProductVariant, Review, Wishlist
 from itertools import product
-from .utils import cookieCart
+from .utils import cookieCart, send_telegram_notification, send_order_email
 from .forms import CreateUserForm
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout, update_session_auth_hash
@@ -570,13 +570,22 @@ def process_order(request):
         
         order.save()
         
-        ShippingAddress.objects.create(
+        shipping_address = ShippingAddress.objects.create(
             customer=request.user if request.user.is_authenticated else None,
             order=order,
             address=data['form'].get('address', ''),
             city=data['form'].get('city', ''),
             mobile=data['form'].get('phone', ''),
         )
+        
+        if payment_method == 'cod':
+            send_telegram_notification(order, shipping_address)
+            customer_name = data['form'].get('name', 'Quý khách')
+            customer_email = data['form'].get('email', '')
+            if request.user.is_authenticated and request.user.email:
+                customer_email = request.user.email
+                customer_name = request.user.first_name or request.user.username
+            send_order_email(order, customer_email, customer_name, shipping_address)
         
         if payment_method == 'transfer':
             # Check if PayOS is configured, fallback to manual bank transfer if empty
@@ -628,13 +637,23 @@ def payment_success(request):
     customer = None
     if request.user.is_authenticated:
         customer = request.user
-        # Khi thành công, nếu có đơn hàng đang chờ thì đánh dấu hoàn tất.
         # Ở môi trường thực tế, việc này nên được làm ở webhook.
         try:
             order = Order.objects.get(customer=customer, complete=False)
             order.complete = True
             order.status = 'chuẩn bị hàng'
             order.save()
+            
+            try:
+                shipping_address = order.shippingaddress_set.first()
+            except:
+                shipping_address = None
+                
+            send_telegram_notification(order, shipping_address)
+            customer_name = customer.first_name or customer.username
+            if customer.email:
+                send_order_email(order, customer.email, customer_name, shipping_address)
+                
         except:
             pass
         # Reset cart info for view

@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Xác nhận đơn hàng</title>
+    <style>
+        body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+        .container { max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #ddd; border-radius: 5px; }
+        .header { text-align: center; border-bottom: 2px solid #0056b3; padding-bottom: 10px; margin-bottom: 20px; }
+        .header h1 { color: #0056b3; margin: 0; }
+        .content { margin-bottom: 20px; }
+        .table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
+        .table th, .table td { border: 1px solid #ddd; padding: 10px; text-align: left; }
+        .table th { background-color: #f4f4f4; }
+        .footer { text-align: center; font-size: 0.9em; color: #777; border-top: 1px solid #ddd; padding-top: 10px; }
+        .text-right { text-align: right !important; }
+        .total-row { font-weight: bold; font-size: 1.1em; color: #d9534f; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Cảm ơn bạn đã đặt hàng!</h1>
+        </div>
+        
+        <div class="content">
+            <p>Chào <strong>{{ customer_name }}</strong>,</p>
+            <p>Đơn hàng <strong>#{{ order.id }}</strong> của bạn đã được nhận và đang được xử lý. Dưới đây là chi tiết đơn hàng của bạn:</p>
+            
+            <h3>Thông tin giao hàng</h3>
+            <p>
+                <strong>Người nhận:</strong> {{ customer_name }}<br>
+                <strong>Số điện thoại:</strong> {{ shipping_address.mobile }}<br>
+                <strong>Địa chỉ:</strong> {{ shipping_address.address }}, {{ shipping_address.city }}
+            </p>
+
+            <h3>Chi tiết sản phẩm</h3>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Sản phẩm</th>
+                        <th>Số lượng</th>
+                        <th class="text-right">Thành tiền</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in items %}
+                    <tr>
+                        <td>{{ item.product.name }}</td>
+                        <td>{{ item.quantity }}</td>
+                        <td class="text-right">{{ item.get_total|floatformat:"0" }} ₫</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+                <tfoot>
+                    <tr class="total-row">
+                        <td colspan="2" class="text-right">Tổng cộng:</td>
+                        <td class="text-right">{{ order.get_cart_total|floatformat:"0" }} ₫</td>
+                    </tr>
+                </tfoot>
+            </table>
+            
+            <p>Phương thức thanh toán: <strong>{% if order.payment_method == 'transfer' %}Chuyển khoản / Trực tuyến{% else %}Thanh toán khi nhận hàng (COD){% endif %}</strong></p>
+            <p>Tình trạng thanh toán: <strong>{% if order.complete %}Đã xác nhận{% else %}Chưa hoàn tất{% endif %}</strong></p>
+            
+            <p>Nếu bạn có bất kỳ thắc mắc nào, vui lòng liên hệ với chúng tôi qua email này.</p>
+        </div>
+        
+        <div class="footer">
+            <p>&copy; 2024 Web Bán Hàng. All rights reserved.</p>
+        </div>
+    </div>
+</body>
+</html>
